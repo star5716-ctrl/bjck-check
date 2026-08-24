@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>\u6bd4\u5229\u00b7\u7b80\u00b7\u91d1\u676f \u00b7 \u4e0b\u5361\u6838\u9a8c</title>
-<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"><\/script>
+<title>比利·简·金杯 · 下卡核验</title>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <style>
 :root {
   --primary: #C41230; --primary-dark: #8B0020; --bg: #F5F5F5; --card: #FFFFFF;
@@ -103,92 +103,101 @@ body {
 <body>
 
 <div class="header">
-  <h1>&#x1F3C6; &#x6BD4;&#x5229;&#x00B7;&#x7B80;&#x00B7;&#x91D1;&#x676F;</h1>
-  <div class="subtitle">&#x5DE5;&#x5546;&#x94F6;&#x884C;&#x8054;&#x540D;&#x5361; &#x00B7; &#x4E0B;&#x5361;&#x6838;&#x9A8C;</div>
-  <div class="badge">&#x793C;&#x54C1;&#x9886;&#x53D6;&#x8D44;&#x683C; &#x00B7; &#x73B0;&#x573A;&#x68C0;&#x67E5;</div>
+  <h1> 比利·简·金杯</h1>
+  <div class="subtitle">工商银行联名卡 · 下卡核验</div>
+  <div class="badge">礼品领取资格 · 现场检查</div>
 </div>
 
 <div class="container">
   <div class="upload-card">
     <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
-      <div class="upload-icon">&#x1F4F7;</div>
-      <div class="upload-text">&#x70B9;&#x51FB;&#x4E0A;&#x4F20;&#x6216;&#x62CD;&#x7167;</div>
-      <div class="upload-hint">&#x4E0A;&#x4F20;&#x5BA2;&#x6237;&#x5DE5;&#x884C;APP&#x622A;&#x56FE;&#xFF0C;&#x81EA;&#x52A8;&#x8BC6;&#x522B;&#x6838;&#x9A8C;</div>
+      <div class="upload-icon">📷</div>
+      <div class="upload-text">点击上传或拍照</div>
+      <div class="upload-hint">上传客户工行APP截图，自动识别核验</div>
     </div>
     <input type="file" id="fileInput" accept="image/*" onchange="handleUpload(event)" style="display:none">
   </div>
 
   <div class="preview-card" id="previewCard" style="display:none">
     <div class="preview-top">
-      <span>&#x1F4F7; &#x5DF2;&#x4E0A;&#x4F20;&#x622A;&#x56FE;</span>
-      <button class="btn-change" onclick="document.getElementById('fileInput').click()">&#x91CD;&#x65B0;&#x9009;&#x62E9;</button>
+      <span>📷 已上传截图</span>
+      <button class="btn-change" onclick="document.getElementById('fileInput').click()">重新选择</button>
     </div>
     <img id="previewImg" src="" alt="preview">
   </div>
 
   <div class="progress-card" id="progressCard" style="display:none">
-    <div class="progress-icon">&#x23F3;</div>
-    <div class="progress-title">&#x6B63;&#x5728;&#x8BC6;&#x522B;&#x622A;&#x56FE;&#x2026;</div>
+    <div class="progress-icon">⏳</div>
+    <div class="progress-title">正在识别截图…</div>
     <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
-    <div class="progress-text" id="progressText">&#x521D;&#x59CB;&#x5316;&#x4E2D;</div>
+    <div class="progress-text" id="progressText">初始化中</div>
   </div>
 
   <div class="result-card" id="resultCard"></div>
 
   <div class="history-section" id="historySection" style="display:none">
     <div class="history-header">
-      <h3>&#x1F4CB; &#x6838;&#x9A8C;&#x8BB0;&#x5F55;</h3>
-      <button class="history-clear" onclick="clearHistory()">&#x6E05;&#x7A7A;&#x8BB0;&#x5F55;</button>
+      <h3> 核验记录</h3>
+      <button class="history-clear" onclick="clearHistory()">清空记录</button>
     </div>
     <div id="historyList"></div>
   </div>
 
   <div class="footer">
-    &#x6BD4;&#x5229;&#x00B7;&#x7B80;&#x00B7;&#x91D1;&#x676F;&#x8D5B;&#x4E8B; &#x00B7; &#x5DE5;&#x5546;&#x94F6;&#x884C;&#x8054;&#x540D;&#x5361;&#x63A8;&#x5E7F;<br>
-    &#x73B0;&#x573A;&#x6838;&#x9A8C;&#x5DE5;&#x5177; v5.1 &#x00B7; &#x9488;&#x5BF9;&#x5DE5;&#x884C;APP&#x622A;&#x56FE;&#x4F18;&#x5316;
+    比利·简·金杯赛事 · 工商银行联名卡推广<br>
+    现场核验工具 v6.0 · 针对工行APP截图优化
   </div>
 </div>
 
 <script>
-// Using String.fromCharCode to avoid any encoding issues with Chinese chars
-function S() {
-  var args = arguments;
-  var result = '';
-  for (var i = 0; i < args.length; i++) {
-    result += String.fromCharCode(args[i]);
-  }
-  return result;
-}
+// All Chinese strings built via String.fromCharCode to avoid encoding issues
+var K = {};
+K.shenQingDan = String.fromCharCode(0x7533,0x8BF7,0x5355);
+K.kaiHuChengGong = String.fromCharCode(0x5F00,0x6237,0x6210,0x529F);
+K.fenDou = String.fromCharCode(0x594B,0x6597);
+K.wanShiDa = String.fromCharCode(0x4E07,0x4E8B,0x8FBE);
+K.ouZhou = String.fromCharCode(0x6B27,0x6D32);
+K.zhongGuo = String.fromCharCode(0x4E2D,0x56FD);
+K.henZan = String.fromCharCode(0x5F88,0x8D5E);
+K.yiWanCheng = String.fromCharCode(0x5DF2,0x5B8C,0x6210);
+K.yiQiYong = String.fromCharCode(0x5DF2,0x542F,0x7528);
+K.yiYouJi = String.fromCharCode(0x5DF2,0x90AE,0x5BC4);
+K.yiShenPi = String.fromCharCode(0x5DF2,0x5BA1,0x6279);
+K.kaiHu = String.fromCharCode(0x5F00,0x6237);
+K.wanXiangXing = String.fromCharCode(0x4E07,0x8C61,0x661F);
 
-// Build search keywords using char codes
-var K = {
-  shenQingDan: S(0x7533, 0x8BF7, 0x5355), // 申请单
-  kaiHuChengGong: S(0x5F00, 0x6237, 0x6210, 0x529F), // 开户成功
-  fenDou: S(0x594B, 0x6597), // 奋斗
-  wanShiDa: S(0x4E07, 0x4E8B, 0x8FBE), // 万事达
-  ouZhou: S(0x6B27, 0x6D32), // 欧洲
-  zhongGuo: S(0x4E2D, 0x56FD), // 中国
-  henZan: S(0x5F88, 0x8D5E), // 很赞
-  wanXiangXing: S(0x4E07, 0x8C61, 0x661F), // 万象星
-  lianMing: S(0x8054, 0x540D), // 联名
-  muDan: S(0x7261, 0x4E39), // 牡丹
-  yiWanCheng: S(0x5DF2, 0x5B8C, 0x6210), // 已完成
-  yiQiYong: S(0x5DF2, 0x542F, 0x7528), // 已启用
-  yiYouJi: S(0x5DF2, 0x90AE, 0x5BC4), // 已邮寄
-  yiShenPi: S(0x5DF2, 0x5BA1, 0x6279), // 已审批
-  kaiHu: S(0x5F00, 0x6237), // 开户
-  riQi: S(0x7533, 0x8BF7, 0x65E5, 0x671F), // 申请日期
-  beiJing: S(0x5317, 0x4EAC), // 北京
-};
+var cardFendou = K.fenDou + K.wanShiDa + String.fromCharCode(0x7B80,0x7EA6,0x767D,0x91D1,0x5361);
+var cardOuzhou = K.ouZhou + String.fromCharCode(0x65C5,0x884C,0x5361);
+var cardFendouZG = K.fenDou + K.zhongGuo + K.henZan + 'M' + String.fromCharCode(0x767D,0x91D1);
+var validCards = [cardFendou, cardOuzhou, cardFendouZG];
 
-var validCards = [
-  K.fenDou + K.wanShiDa + S(0x7B80, 0x7EA6, 0x767D, 0x91D1, 0x5361),
-  K.ouZhou + S(0x65C5, 0x884C, 0x5361),
-  K.fenDou + K.zhongGuo + K.henZan + 'M' + S(0x767D, 0x91D1)
-];
 var path1Statuses = [K.kaiHuChengGong, K.yiWanCheng];
 var path2Statuses = [K.yiQiYong, K.yiYouJi, K.yiShenPi];
 var minDate = '2025-01-01';
+
+var UI = {};
+UI.initText = String.fromCharCode(0x521D,0x59CB,0x5316,0x4E2D,0x2026);
+UI.recogText = String.fromCharCode(0x6B63,0x5728,0x8BC6,0x522B,0x2026);
+UI.noResult = String.fromCharCode(0x672A,0x8BC6,0x522B,0x5230,0x6709,0x6548,0x4FE1,0x606F);
+UI.totalText = String.fromCharCode(0x5171,0x8BC6,0x522B);
+UI.tiao = String.fromCharCode(0x6761);
+UI.jilu = String.fromCharCode(0x8BB0,0x5F55,0xFF0C);
+UI.tongguo = String.fromCharCode(0x901A,0x8FC7);
+UI.butongguo = String.fromCharCode(0x4E0D,0x901A,0x8FC7);
+UI.douhao = String.fromCharCode(0x3001);
+UI.weishibie = String.fromCharCode(0x672A,0x8BC6,0x522B);
+UI.zhishibufu = String.fromCharCode(0x5361,0x79CD,0x4E0D,0x7B26,0x5408);
+UI.rqweishibie = String.fromCharCode(0x65E5,0x671F,0x672A,0x8BC6,0x522B);
+UI.rqbufu = String.fromCharCode(0x65E5,0x671F,0x4E0D,0x7B26,0x5408);
+UI.ztweishibie = String.fromCharCode(0x72B6,0x6001,0x672A,0x8BC6,0x522B);
+UI.ztbufu = String.fromCharCode(0x72B6,0x6001,0x4E0D,0x7B26,0x5408);
+UI.youfuhe = String.fromCharCode(0x6709,0x7B26,0x5408,0x6761,0x4EF6,0x7684,0x8BB0,0x5F55,0xFF0C,0x53EF,0x4EE5,0x9886,0x53D6,0x793C,0x54C1);
+UI.rqi = String.fromCharCode(0x65E5,0x671F);
+UI.zhuangtai = String.fromCharCode(0x72B6,0x6001);
+UI.lujing = String.fromCharCode(0x8DEF,0x5F84);
+UI.shenqingriqi = String.fromCharCode(0x7533,0x8BF7,0x65E5,0x671F);
+UI.qingkong = String.fromCharCode(0x786E,0x8BA4,0x6E05,0x7A7A,0x6240,0x6709,0x6838,0x9A8C,0x8BB0,0x5F55,0xFF1F);
+UI.weizhi = String.fromCharCode(0x672A,0x77E5);
 
 function handleUpload(event) {
   var file = event.target.files[0];
@@ -202,7 +211,7 @@ function handleUpload(event) {
     rc.style.display = 'none';
     rc.className = 'result-card';
     document.getElementById('progressFill').style.width = '0%';
-    document.getElementById('progressText').textContent = S(0x521D, 0x59CB, 0x5316, 0x4E2D, 0x2026);
+    document.getElementById('progressText').textContent = UI.initText;
     runOCR(e.target.result);
   };
   reader.readAsDataURL(file);
@@ -214,7 +223,7 @@ function runOCR(imageSrc) {
       if (m.status === 'recognizing text') {
         var pct = Math.round(m.progress * 100);
         document.getElementById('progressFill').style.width = pct + '%';
-        document.getElementById('progressText').textContent = S(0x6B63, 0x5728, 0x8BC6, 0x522B, 0x2026) + ' ' + pct + '%';
+        document.getElementById('progressText').textContent = UI.recogText + ' ' + pct + '%';
       } else if (m.status) {
         document.getElementById('progressText').textContent = m.status;
       }
@@ -229,43 +238,37 @@ function runOCR(imageSrc) {
   }).catch(function(err) {
     console.error('OCR error:', err);
     document.getElementById('progressCard').style.display = 'none';
-    showResult(false, [], S(0x4E0D, 0x80FD, 0x8BC6, 0x522B), true, String(err));
+    showResult(false, [], 'OCR\u8bc6\u522b\u5931\u8d25', true, String(err));
   });
 }
 
 function parseAndVerify(text) {
   console.log('Parsing text, length:', text.length);
   var records = [];
-
-  // Split by "申请单"
   var sqd = K.shenQingDan;
   var parts = text.split(sqd);
-  console.log('Split into', parts.length, 'parts by', sqd);
+  console.log('Split into', parts.length, 'parts');
 
   for (var i = 1; i < parts.length; i++) {
     var part = parts[i];
     var rec = { cardName: '', applyDate: '', cardStatus: '', path: 1 };
-
-    // Get first 5 lines as header (contains card name)
     var lines = part.split(/\r?\n/);
     var header = lines.slice(0, 5).join('\n');
 
-    // Card name detection
+    // Card name
     if (header.indexOf(K.ouZhou) >= 0) {
-      rec.cardName = K.ouZhou + S(0x65C5, 0x884C, 0x5361);
+      rec.cardName = cardOuzhou;
     } else if (header.indexOf(K.fenDou) >= 0 && header.indexOf(K.wanShiDa) >= 0) {
-      rec.cardName = K.fenDou + K.wanShiDa + S(0x7B80, 0x7EA6, 0x767D, 0x91D1, 0x5361);
+      rec.cardName = cardFendou;
     } else if (header.indexOf(K.fenDou) >= 0 && (header.indexOf(K.zhongGuo) >= 0 || header.indexOf(K.henZan) >= 0)) {
-      rec.cardName = K.fenDou + K.zhongGuo + K.henZan + 'M' + S(0x767D, 0x91D1);
+      rec.cardName = cardFendouZG;
     } else if (header.indexOf(K.fenDou) >= 0) {
-      rec.cardName = K.fenDou + K.wanShiDa + S(0x7B80, 0x7EA6, 0x767D, 0x91D1, 0x5361);
+      rec.cardName = cardFendou;
     } else if (header.indexOf(K.wanXiangXing) >= 0) {
-      rec.cardName = K.wanXiangXing + K.lianMing + S(0x5361);
-    } else if (header.indexOf(K.muDan) >= 0) {
-      rec.cardName = K.muDan + K.wanShiDa + S(0x767D, 0x91D1, 0x5361);
+      rec.cardName = K.wanXiangXing + String.fromCharCode(0x8054,0x540D,0x5361);
     }
 
-    // Date detection
+    // Date
     for (var l = 0; l < lines.length; l++) {
       var dm = lines[l].match(/(\d{4})[-\/\u5e74](\d{1,2})[-\/\u6708](\d{1,2})/);
       if (dm && !rec.applyDate) {
@@ -275,7 +278,7 @@ function parseAndVerify(text) {
       }
     }
 
-    // Status detection
+    // Status
     if (part.indexOf(K.kaiHuChengGong) >= 0) {
       rec.cardStatus = K.kaiHuChengGong; rec.path = 1;
     } else if (part.indexOf(K.yiWanCheng) >= 0) {
@@ -299,7 +302,7 @@ function parseAndVerify(text) {
   console.log('Total records:', records.length);
 
   if (records.length === 0) {
-    showResult(false, [], S(0x672A, 0x8BC6, 0x522B, 0x5230, 0x6709, 0x6548, 0x4FE1, 0x606F), true, text);
+    showResult(false, [], UI.noResult, true, text);
     return;
   }
 
@@ -311,35 +314,35 @@ function parseAndVerify(text) {
 
     if (!rec.cardName || validCards.indexOf(rec.cardName) === -1) {
       pass = false;
-      reasons.push(S(0x5361, 0x79CD, 0x4E0D, 0x7B26, 0x5408) + '(' + (rec.cardName || S(0x672A, 0x8BC6, 0x522B)) + ')');
+      reasons.push(UI.zhishibufu + '(' + (rec.cardName || UI.weishibie) + ')');
     }
     if (!rec.applyDate) {
       pass = false;
-      reasons.push(S(0x65E5, 0x671F, 0x672A, 0x8BC6, 0x522B));
+      reasons.push(UI.rqweishibie);
     } else if (rec.applyDate < minDate) {
       pass = false;
-      reasons.push(S(0x65E5, 0x671F, 0x4E0D, 0x7B26, 0x5408));
+      reasons.push(UI.rqbufu);
     }
     if (!rec.cardStatus) {
       pass = false;
-      reasons.push(S(0x72B6, 0x6001, 0x672A, 0x8BC6, 0x522B));
+      reasons.push(UI.ztweishibie);
     } else {
       var expected = rec.path === 1 ? path1Statuses : path2Statuses;
       if (expected.indexOf(rec.cardStatus) === -1) {
         pass = false;
-        reasons.push(S(0x72B6, 0x6001, 0x4E0D, 0x7B26, 0x5408));
+        reasons.push(UI.ztbufu);
       }
     }
 
     results.push({
-      cardName: rec.cardName || S(0x672A, 0x8BC6, 0x522B),
+      cardName: rec.cardName || UI.weishibie,
       pass: pass,
-      reason: reasons.join(S(0x3001)),
+      reason: reasons.join(UI.douhao),
       date: rec.applyDate || '-',
       status: rec.cardStatus || '-'
     });
 
-    saveHistory(pass, rec.cardName || S(0x672A, 0x77E5), rec.path, rec.applyDate || '-', rec.cardStatus || '-');
+    saveHistory(pass, rec.cardName || UI.weizhi, rec.path, rec.applyDate || '-', rec.cardStatus || '-');
   }
 
   var hasAnyPass = results.some(function(x) { return x.pass; });
@@ -354,7 +357,7 @@ function showResult(hasPass, results, errorMsg, showDebug, rawText) {
   var html = '';
 
   if (errorMsg) {
-    html += '<div class="result-icon">&#x26a0;&#xfe0f;</div>';
+    html += '<div class="result-icon">\u26a0\ufe0f</div>';
     html += '<div class="result-title">' + errorMsg + '</div>';
   } else {
     var totalPass = 0;
@@ -363,25 +366,25 @@ function showResult(hasPass, results, errorMsg, showDebug, rawText) {
     }
     var totalFail = results.length - totalPass;
 
-    html += '<div class="result-icon">' + (hasPass ? '&#x2705;' : '&#x274c;') + '</div>';
-    html += '<div class="result-title">' + S(0x5171, 0x8BC6, 0x522B) + ' ' + results.length + ' ' + S(0x6761, 0x8BB0, 0x5F55, 0xFF0C) + totalPass + ' ' + S(0x6761, 0x901A, 0x8FC7, 0xFF0C) + totalFail + ' ' + S(0x6761, 0x4E0D, 0x901A, 0x8FC7);
+    html += '<div class="result-icon">' + (hasPass ? '\u2705' : '\u274c') + '</div>';
+    html += '<div class="result-title">' + UI.totalText + ' ' + results.length + ' ' + UI.tiao + UI.jilu + totalPass + ' ' + UI.tiao + UI.tongguo + UI.douhao + totalFail + ' ' + UI.tiao + UI.butongguo;
     if (hasPass) {
-      html += ' &#x2014; ' + S(0x6709, 0x7B26, 0x5408, 0x6761, 0x4EF6, 0x7684, 0x8BB0, 0x5F55, 0xFF0C, 0x53EF, 0x4EE5, 0x9886, 0x53D6, 0x793C, 0x54C1) + ' &#x1f381;';
+      html += ' \u2014 ' + UI.youfuhe + ' \ud83c\udf81';
     }
     html += '</div>';
     html += '<div class="result-details">';
 
     for (var j = 0; j < results.length; j++) {
       var r = results[j];
-      var icon = r.pass ? '&#x2705;' : '';
+      var icon = r.pass ? '\u2705' : '';
       var color = r.pass ? 'var(--success)' : 'var(--fail)';
-      var label = r.pass ? S(0x901A, 0x8FC7) : S(0x4E0D, 0x901A, 0x8FC7);
+      var label = r.pass ? UI.tongguo : UI.butongguo;
       html += '<div style="padding:10px 0;border-bottom:1px dashed var(--border);">';
       html += '<div style="font-weight:600;margin-bottom:4px;">' + icon + ' ' + r.cardName + '</div>';
-      html += '<div style="font-size:12px;color:var(--text-secondary);">' + S(0x65E5, 0x671F) + ': ' + r.date + ' | ' + S(0x72B6, 0x6001) + ': ' + r.status + '</div>';
+      html += '<div style="font-size:12px;color:var(--text-secondary);">' + UI.rqi + ': ' + r.date + ' | ' + UI.zhuangtai + ': ' + r.status + '</div>';
       html += '<div style="font-size:13px;font-weight:600;margin-top:4px;color:' + color + ';">' + label;
       if (!r.pass && r.reason) {
-        html += ' &#x2014; ' + r.reason;
+        html += ' \u2014 ' + r.reason;
       }
       html += '</div></div>';
     }
@@ -389,7 +392,7 @@ function showResult(hasPass, results, errorMsg, showDebug, rawText) {
   }
 
   if (showDebug && rawText) {
-    html += '<div class="ocr-debug"><strong>' + S(0x4F60, 0x53EF, 0x4EE5, 0x628A, 0x8FD9, 0x6BB5, 0x53D1, 0x7ED9, 0x6211, 0xFF1A) + '</strong>\n' + escapeHtml(rawText.substring(0, 800)) + '</div>';
+    html += '<div class="ocr-debug"><strong>OCR\u8bc6\u522b\u539f\u6587\uff1a</strong>\n' + escapeHtml(rawText.substring(0, 800)) + '</div>';
   }
 
   card.innerHTML = html;
@@ -428,8 +431,8 @@ function renderHistory() {
       var h = history[i];
       html += '<div class="history-item">' +
         '<div class="hi-top"><span class="hi-card">' + h.cardName + '</span>' +
-        '<span class="hi-status ' + (h.pass ? 'pass' : 'fail') + '">' + (h.pass ? S(0x901A, 0x8FC7) : S(0x4E0D, 0x901A, 0x8FC7)) + '</span></div>' +
-        '<div class="hi-detail">' + S(0x8DEF, 0x5F84) + h.path + ' &#x00B7; ' + S(0x7533, 0x8BF7, 0x65E5, 0x671F) + ' ' + h.date + ' &#x00B7; ' + S(0x72B6, 0x6001) + ' ' + h.status + '</div>' +
+        '<span class="hi-status ' + (h.pass ? 'pass' : 'fail') + '">' + (h.pass ? UI.tongguo : UI.butongguo) + '</span></div>' +
+        '<div class="hi-detail">' + UI.lujing + h.path + ' \u00b7 ' + UI.shenqingriqi + ' ' + h.date + ' \u00b7 ' + UI.zhuangtai + ' ' + h.status + '</div>' +
         '<div class="hi-time">' + h.time + '</div></div>';
     }
     list.innerHTML = html;
@@ -437,13 +440,13 @@ function renderHistory() {
 }
 
 function clearHistory() {
-  if (confirm(S(0x786E, 0x8BA4, 0x6E05, 0x7A7A, 0x6240, 0x6709, 0x6838, 0x9A8C, 0x8BB0, 0x5F55, 0xFF1F))) {
+  if (confirm(UI.qingkong)) {
     localStorage.removeItem('bjck_history');
     renderHistory();
   }
 }
 
 renderHistory();
-<\/script>
+</script>
 </body>
 </html>
