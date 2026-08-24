@@ -3,436 +3,349 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>比利·简·金杯 · 下卡核验</title>
-<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+<title>\u6bd4\u5229\u00b7\u7b80\u00b7\u91d1\u676f \u00b7 \u4e0b\u5361\u6838\u9a8c</title>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"><\/script>
 <style>
-:root {
-  --primary: #C41230; --primary-dark: #8B0020; --bg: #F5F5F5; --card: #FFFFFF;
-  --text: #1A1A1A; --text-secondary: #666666; --border: #E0E0E0;
-  --success: #2E7D32; --success-bg: #E8F5E9; --fail: #C62828; --fail-bg: #FFEBEE;
-  --gold: #D4A843;
-}
-* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-body {
-  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
-  background: var(--bg); color: var(--text); min-height: 100vh;
-  padding-bottom: env(safe-area-inset-bottom);
-}
-.header {
-  background: linear-gradient(135deg, var(--primary-dark), var(--primary));
-  color: #fff; padding: 20px 16px 16px; text-align: center;
-}
-.header h1 { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
-.header .subtitle { font-size: 13px; opacity: 0.85; }
-.header .badge {
-  display: inline-block; background: var(--gold); color: #1A1A1A;
-  font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 10px; margin-top: 8px;
-}
-.container { padding: 16px; max-width: 480px; margin: 0 auto; }
-.upload-card {
-  background: var(--card); border-radius: 16px; padding: 20px 16px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.06); margin-bottom: 16px;
-}
-.upload-zone {
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  padding: 28px 16px; border: 2px dashed var(--border); border-radius: 12px;
-  cursor: pointer; transition: all 0.2s;
-}
-.upload-zone:active { border-color: var(--primary); background: #FFF0F3; }
-.upload-icon { font-size: 44px; margin-bottom: 8px; }
-.upload-text { font-size: 15px; font-weight: 600; }
-.upload-hint { font-size: 12px; color: var(--text-secondary); margin-top: 4px; }
-.preview-card {
-  background: var(--card); border-radius: 16px; padding: 12px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.06); margin-bottom: 16px;
-}
-.preview-top {
-  display: flex; justify-content: space-between; align-items: center;
-  margin-bottom: 8px; font-size: 13px; color: var(--text-secondary);
-}
-.btn-change { background: none; border: none; color: var(--primary); font-size: 13px; cursor: pointer; }
-#previewImg { width: 100%; border-radius: 10px; max-height: 280px; object-fit: contain; }
-.progress-card {
-  background: var(--card); border-radius: 16px; padding: 20px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.06); margin-bottom: 16px; text-align: center;
-}
-.progress-icon { font-size: 36px; margin-bottom: 8px; }
-.progress-title { font-size: 15px; font-weight: 600; margin-bottom: 12px; }
-.progress-bar {
-  height: 6px; background: #E8E8E8; border-radius: 3px; overflow: hidden; margin-bottom: 8px;
-}
-.progress-fill { height: 100%; background: var(--primary); border-radius: 3px; transition: width 0.3s; }
-.progress-text { font-size: 12px; color: var(--text-secondary); }
-.result-card {
-  border-radius: 16px; padding: 20px 16px; margin-bottom: 16px; display: none;
-}
-.result-card.pass { background: var(--success-bg); border: 1.5px solid var(--success); }
-.result-card.fail { background: var(--fail-bg); border: 1.5px solid var(--fail); }
-.result-icon { font-size: 36px; text-align: center; margin-bottom: 8px; }
-.result-title { text-align: center; font-size: 18px; font-weight: 700; margin-bottom: 12px; }
-.result-card.pass .result-title { color: var(--success); }
-.result-card.fail .result-title { color: var(--fail); }
-.result-details { background: rgba(255,255,255,0.7); border-radius: 10px; padding: 12px; font-size: 13px; }
-.result-details .item { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px dashed var(--border); }
-.result-details .item:last-child { border-bottom: none; }
-.result-details .item .k { color: var(--text-secondary); }
-.result-details .item .v { font-weight: 600; }
-.ocr-debug {
-  background: #f0f0f0; border-radius: 8px; padding: 10px; margin-top: 12px;
-  font-size: 11px; color: #666; max-height: 150px; overflow-y: auto;
-  white-space: pre-wrap; word-break: break-all;
-}
-.history-section { margin-top: 8px; }
-.history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-.history-header h3 { font-size: 15px; font-weight: 600; }
-.history-clear { font-size: 12px; color: var(--primary); background: none; border: none; cursor: pointer; }
-.history-item {
-  background: var(--card); border-radius: 12px; padding: 14px; margin-bottom: 8px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
-}
-.history-item .hi-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-.history-item .hi-card { font-weight: 600; font-size: 14px; }
-.history-item .hi-time { font-size: 11px; color: var(--text-secondary); }
-.history-item .hi-detail { font-size: 12px; color: var(--text-secondary); }
-.history-item .hi-status { display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; }
-.history-item .hi-status.pass { background: var(--success-bg); color: var(--success); }
-.history-item .hi-status.fail { background: var(--fail-bg); color: var(--fail); }
-.footer { text-align: center; padding: 20px 16px 30px; font-size: 11px; color: #999; }
+:root{--primary:#C41230;--primary-dark:#8B0020;--bg:#F5F5F5;--card:#FFF;--text:#1A1A1A;--text-secondary:#666;--border:#E0E0E0;--success:#2E7D32;--success-bg:#E8F5E9;--fail:#C62828;--fail-bg:#FFEBEE;--gold:#D4A843}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:env(safe-area-inset-bottom)}
+.header{background:linear-gradient(135deg,var(--primary-dark),var(--primary));color:#fff;padding:20px 16px 16px;text-align:center}
+.header h1{font-size:20px;font-weight:600;margin-bottom:4px}
+.header .subtitle{font-size:13px;opacity:.85}
+.header .badge{display:inline-block;background:var(--gold);color:#1A1A1A;font-size:11px;font-weight:600;padding:2px 8px;border-radius:10px;margin-top:8px}
+.container{padding:16px;max-width:480px;margin:0 auto}
+.upload-card{background:var(--card);border-radius:16px;padding:20px 16px;box-shadow:0 2px 12px rgba(0,0,0,.06);margin-bottom:16px}
+.upload-zone{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px 16px;border:2px dashed var(--border);border-radius:12px;cursor:pointer;transition:all .2s}
+.upload-zone:active{border-color:var(--primary);background:#FFF0F3}
+.upload-icon{font-size:44px;margin-bottom:8px}
+.upload-text{font-size:15px;font-weight:600}
+.upload-hint{font-size:12px;color:var(--text-secondary);margin-top:4px}
+.preview-card{background:var(--card);border-radius:16px;padding:12px;box-shadow:0 2px 12px rgba(0,0,0,.06);margin-bottom:16px}
+.preview-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:13px;color:var(--text-secondary)}
+.btn-change{background:none;border:none;color:var(--primary);font-size:13px;cursor:pointer}
+#previewImg{width:100%;border-radius:10px;max-height:280px;object-fit:contain}
+.progress-card{background:var(--card);border-radius:16px;padding:20px;box-shadow:0 2px 12px rgba(0,0,0,.06);margin-bottom:16px;text-align:center}
+.progress-icon{font-size:36px;margin-bottom:8px}
+.progress-title{font-size:15px;font-weight:600;margin-bottom:12px}
+.progress-bar{height:6px;background:#E8E8E8;border-radius:3px;overflow:hidden;margin-bottom:8px}
+.progress-fill{height:100%;background:var(--primary);border-radius:3px;transition:width .3s}
+.progress-text{font-size:12px;color:var(--text-secondary)}
+.result-card{border-radius:16px;padding:20px 16px;margin-bottom:16px;display:none}
+.result-card.pass{background:var(--success-bg);border:1.5px solid var(--success)}
+.result-card.fail{background:var(--fail-bg);border:1.5px solid var(--fail)}
+.result-icon{font-size:36px;text-align:center;margin-bottom:8px}
+.result-title{text-align:center;font-size:18px;font-weight:700;margin-bottom:12px}
+.result-card.pass .result-title{color:var(--success)}
+.result-card.fail .result-title{color:var(--fail)}
+.result-details{background:rgba(255,255,255,.7);border-radius:10px;padding:12px;font-size:13px}
+.result-details .item{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed var(--border)}
+.result-details .item:last-child{border-bottom:none}
+.result-details .item .k{color:var(--text-secondary)}
+.result-details .item .v{font-weight:600}
+.ocr-debug{background:#f0f0f0;border-radius:8px;padding:10px;margin-top:12px;font-size:11px;color:#666;max-height:150px;overflow-y:auto;white-space:pre-wrap;word-break:break-all}
+.history-section{margin-top:8px}
+.history-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.history-header h3{font-size:15px;font-weight:600}
+.history-clear{font-size:12px;color:var(--primary);background:none;border:none;cursor:pointer}
+.history-item{background:var(--card);border-radius:12px;padding:14px;margin-bottom:8px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.history-item .hi-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.history-item .hi-card{font-weight:600;font-size:14px}
+.history-item .hi-time{font-size:11px;color:var(--text-secondary)}
+.history-item .hi-detail{font-size:12px;color:var(--text-secondary)}
+.history-item .hi-status{display:inline-block;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600}
+.history-item .hi-status.pass{background:var(--success-bg);color:var(--success)}
+.history-item .hi-status.fail{background:var(--fail-bg);color:var(--fail)}
+.footer{text-align:center;padding:20px 16px 30px;font-size:11px;color:#999}
 </style>
 </head>
 <body>
-
 <div class="header">
-  <h1>&#x1f3c6; 比利·简·金杯</h1>
-  <div class="subtitle">工商银行联名卡 · 下卡核验</div>
-  <div class="badge">礼品领取资格 · 现场检查</div>
+  <h1>&#x1f3c6; \u6bd4\u5229\u00b7\u7b80\u00b7\u91d1\u676f</h1>
+  <div class="subtitle">\u5de5\u5546\u94f6\u884c\u8054\u540d\u5361 \u00b7 \u4e0b\u5361\u6838\u9a8c</div>
+  <div class="badge">\u793c\u54c1\u9886\u53d6\u8d44\u683c \u00b7 \u73b0\u573a\u68c0\u67e5</div>
 </div>
-
 <div class="container">
   <div class="upload-card">
     <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
       <div class="upload-icon">&#x1f4f7;</div>
-      <div class="upload-text">点击上传或拍照</div>
-      <div class="upload-hint">上传客户工行APP截图，自动识别核验</div>
+      <div class="upload-text">\u70b9\u51fb\u4e0a\u4f20\u6216\u62cd\u7167</div>
+      <div class="upload-hint">\u4e0a\u4f20\u5ba2\u6237\u5de5\u884cAPP\u622a\u56fe\uFF0c\u81ea\u52a8\u8bc6\u522b\u6838\u9a8c</div>
     </div>
     <input type="file" id="fileInput" accept="image/*" onchange="handleUpload(event)" style="display:none">
   </div>
-
   <div class="preview-card" id="previewCard" style="display:none">
     <div class="preview-top">
-      <span>&#x1f4f7; 已上传截图</span>
-      <button class="btn-change" onclick="document.getElementById('fileInput').click()">重新选择</button>
+      <span>&#x1f4f7; \u5df2\u4e0a\u4f20\u622a\u56fe</span>
+      <button class="btn-change" onclick="document.getElementById('fileInput').click()">\u91cd\u65b0\u9009\u62e9</button>
     </div>
     <img id="previewImg" src="" alt="preview">
   </div>
-
   <div class="progress-card" id="progressCard" style="display:none">
     <div class="progress-icon">&#x23f3;</div>
-    <div class="progress-title">正在识别截图…</div>
+    <div class="progress-title">\u6b63\u5728\u8bc6\u522b\u622a\u56fe\u2026</div>
     <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
-    <div class="progress-text" id="progressText">初始化中</div>
+    <div class="progress-text" id="progressText">\u521d\u59cb\u5316\u4e2d</div>
   </div>
-
   <div class="result-card" id="resultCard"></div>
-
   <div class="history-section" id="historySection" style="display:none">
     <div class="history-header">
-      <h3>&#x1f4cb; 核验记录</h3>
-      <button class="history-clear" onclick="clearHistory()">清空记录</button>
+      <h3>&#x1f4cb; \u6838\u9a8c\u8bb0\u5f55</h3>
+      <button class="history-clear" onclick="clearHistory()">\u6e05\u7a7a\u8bb0\u5f55</button>
     </div>
     <div id="historyList"></div>
   </div>
-
-  <div class="footer">
-    比利·简·金杯赛事 · 工商银行联名卡推广<br>
-    现场核验工具 v6.1 · 针对工行APP截图优化
-  </div>
+  <div class="footer">\u6bd4\u5229\u00b7\u7b80\u00b7\u91d1\u676f\u8d5b\u4e8b \u00b7 \u5de5\u5546\u94f6\u884c\u8054\u540d\u5361\u63a8\u5e7f<br>\u73b0\u573a\u6838\u9a8c\u5de5\u5177 v8.0 \u00b7 ASCII-only JS</div>
 </div>
-
 <script>
-// Build Chinese keywords using String.fromCharCode to avoid GitHub Pages encoding corruption
-var K = {};
-K.fendou = String.fromCharCode(0x594b, 0x6597);
-K.wanshida = String.fromCharCode(0x4e07, 0x4e8b, 0x8fBE);
-K.ouzhou = String.fromCharCode(0x6b27, 0x6d32);
-K.zhongguo = String.fromCharCode(0x4e2d, 0x56fd);
-K.henzan = String.fromCharCode(0x5f88, 0x8d5e);
-K.kaihuchenggong = String.fromCharCode(0x5f00, 0x6237, 0x6210, 0x529f);
-K.yiwancheng = String.fromCharCode(0x5df2, 0x5b8c, 0x6210);
-K.yiqiyong = String.fromCharCode(0x5df2, 0x542f, 0x7528);
-K.yiyouji = String.fromCharCode(0x5df2, 0x90ae, 0x5bc4);
-K.yishenpi = String.fromCharCode(0x5df2, 0x5ba1, 0x6279);
-K.kaihu = String.fromCharCode(0x5f00, 0x6237);
-K.shenqingdan = String.fromCharCode(0x7533, 0x8bf7, 0x5355);
-K.wanxiangxing = String.fromCharCode(0x4e07, 0x8c61, 0x661f);
+// ALL matching done with ASCII regex patterns - zero Chinese chars in JS
+// This avoids ALL encoding issues on GitHub Pages
+// We match by looking for key ASCII patterns in the OCR output
 
-var cardFendou = K.fendou + K.wanshida + String.fromCharCode(0x7b80, 0x7ea6, 0x767d, 0x91d1, 0x5361);
-var cardOuzhou = K.ouzhou + String.fromCharCode(0x65c5, 0x884c, 0x5361);
-var cardFendouZG = K.fendou + K.zhongguo + K.henzan + 'M' + String.fromCharCode(0x767d, 0x91d1);
-var validCards = [cardFendou, cardOuzhou, cardFendouZG];
-
-var path1Statuses = [K.kaihuchenggong, K.yiwancheng];
-var path2Statuses = [K.yiqiyong, K.yiyouji, K.yishenpi];
 var minDate = '2025-01-01';
 
-function handleUpload(event) {
-  var file = event.target.files[0];
-  if (!file) return;
-  var reader = new FileReader();
-  reader.onload = function(e) {
-    document.getElementById('previewImg').src = e.target.result;
-    document.getElementById('previewCard').style.display = 'block';
-    document.getElementById('progressCard').style.display = 'block';
-    var rc = document.getElementById('resultCard');
-    rc.style.display = 'none';
-    rc.className = 'result-card';
-    document.getElementById('progressFill').style.width = '0%';
-    document.getElementById('progressText').textContent = String.fromCharCode(0x521d, 0x59cb, 0x5316, 0x4e2d, 0x2026);
-    runOCR(e.target.result);
+function handleUpload(e){
+  var f=e.target.files[0];
+  if(!f)return;
+  var r=new FileReader();
+  r.onload=function(ev){
+    document.getElementById('previewImg').src=ev.target.result;
+    document.getElementById('previewCard').style.display='block';
+    document.getElementById('progressCard').style.display='block';
+    var rc=document.getElementById('resultCard');
+    rc.style.display='none';rc.className='result-card';
+    document.getElementById('progressFill').style.width='0%';
+    document.getElementById('progressText').textContent='\u521d\u59cb\u5316\u4e2d\u2026';
+    runOCR(ev.target.result);
   };
-  reader.readAsDataURL(file);
+  r.readAsDataURL(f);
 }
 
-function runOCR(imageSrc) {
-  Tesseract.recognize(imageSrc, 'chi_sim', {
-    logger: function(m) {
-      if (m.status === 'recognizing text') {
-        var pct = Math.round(m.progress * 100);
-        document.getElementById('progressFill').style.width = pct + '%';
-        document.getElementById('progressText').textContent = String.fromCharCode(0x6b63, 0x5728, 0x8bc6, 0x522b, 0x2026) + ' ' + pct + '%';
-      } else if (m.status) {
-        document.getElementById('progressText').textContent = m.status;
+function runOCR(src){
+  Tesseract.recognize(src,'chi_sim',{
+    logger:function(m){
+      if(m.status==='recognizing text'){
+        var p=Math.round(m.progress*100);
+        document.getElementById('progressFill').style.width=p+'%';
+        document.getElementById('progressText').textContent='\u6b63\u5728\u8bc6\u522b\u2026 '+p+'%';
+      }else if(m.status){
+        document.getElementById('progressText').textContent=m.status;
       }
     }
-  }).then(function(result) {
-    var text = result.data.text;
-    console.log('=== RAW OCR ===');
-    console.log(text);
-    console.log('=== END ===');
-    document.getElementById('progressCard').style.display = 'none';
-    parseAndVerify(text);
-  }).catch(function(err) {
-    console.error('OCR error:', err);
-    document.getElementById('progressCard').style.display = 'none';
-    showResult(false, [], 'OCR\u8bc6\u522b\u5931\u8d25', true, String(err));
+  }).then(function(res){
+    var txt=res.data.text;
+    console.log('=== RAW OCR ===');console.log(txt);console.log('=== END ===');
+    document.getElementById('progressCard').style.display='none';
+    parseAndVerify(txt);
+  }).catch(function(err){
+    console.error('OCR err:',err);
+    document.getElementById('progressCard').style.display='none';
+    showResult(false,[],'OCR failed',true,String(err));
   });
 }
 
-function parseAndVerify(text) {
-  console.log('Parsing text, length:', text.length);
-  var records = [];
-  var sqd = K.shenqingdan;
-  var parts = text.split(sqd);
-  console.log('Split into', parts.length, 'parts');
+// Parse OCR text using ONLY ASCII patterns
+// The OCR output looks like:
+// "申请单:02002025057700521开户成功\n奋斗万事达简约白金卡北京\n申请日期:2025-02-26"
+// Key insight: we can match by finding numbers and patterns
 
-  for (var i = 1; i < parts.length; i++) {
-    var part = parts[i];
-    var rec = { cardName: '', applyDate: '', cardStatus: '', path: 1 };
-    var lines = part.split(/\r?\n/);
-    var header = lines.slice(0, 5).join('\n');
+function parseAndVerify(txt){
+  console.log('Text length:',txt.length);
+  console.log('Text bytes (first 50):',txt.substring(0,50));
 
-    // Card name detection
-    if (header.indexOf(K.ouzhou) >= 0) {
-      rec.cardName = cardOuzhou;
-    } else if (header.indexOf(K.fendou) >= 0 && header.indexOf(K.wanshida) >= 0) {
-      rec.cardName = cardFendou;
-    } else if (header.indexOf(K.fendou) >= 0 && (header.indexOf(K.zhongguo) >= 0 || header.indexOf(K.henzan) >= 0)) {
-      rec.cardName = cardFendouZG;
-    } else if (header.indexOf(K.fendou) >= 0) {
-      rec.cardName = cardFendou;
-    } else if (header.indexOf(K.wanxiangxing) >= 0) {
-      rec.cardName = K.wanxiangxing + String.fromCharCode(0x8054, 0x540d, 0x5361);
+  var records=[];
+
+  // Strategy: split by digits that look like application IDs (15+ digit numbers starting with 0200)
+  // Or split by the known delimiter pattern
+  // Actually, let's split by looking for "申请单" using regex on unicode code points
+
+  // Split by any 15+ digit sequence that starts with 0 (these are application IDs)
+  var idRegex = /(0\d{14,})/g;
+  var ids=[];
+  var match;
+  while((match=idRegex.exec(txt))!==null){
+    ids.push({num:match[0],idx:match.index});
+  }
+  console.log('Found IDs:',ids.length);
+
+  // For each ID, extract surrounding context
+  for(var i=0;i<ids.length;i++){
+    var id=ids[i];
+    // Get text from this ID to the next ID (or end)
+    var start=id.idx;
+    var end=i+1<ids.length?ids[i+1].idx:txt.length;
+    var part=txt.substring(start,end);
+    console.log('Part',i+1,':',part);
+
+    var rec={cardName:'',applyDate:'',cardStatus:'',path:1};
+
+    // Find date in this part: YYYY-MM-DD or YYYY/MM/DD
+    var dm=part.match(/(\d{4})[-\/](\d{1,2})[-\/](\d{1,2})/);
+    if(dm){
+      rec.applyDate=dm[1]+'-'+(dm[2].length<2?'0'+dm[2]:dm[2])+'-'+(dm[3].length<2?'0'+dm[3]:dm[3]);
     }
 
-    // Date detection
-    for (var l = 0; l < lines.length; l++) {
-      var dm = lines[l].match(/(\d{4})[-\/\u5e74](\d{1,2})[-\/\u6708](\d{1,2})/);
-      if (dm && !rec.applyDate) {
-        rec.applyDate = dm[1] + '-' +
-          (dm[2].length < 2 ? '0' + dm[2] : dm[2]) + '-' +
-          (dm[3].length < 2 ? '0' + dm[3] : dm[3]);
-      }
-    }
+    // Find card name by looking for keywords in this part
+    // We use charCode checking to avoid literal Chinese in JS
+    var fd=hasChars(part,[0x594b,0x6597]); // \u594b\u6597
+    var wsd=hasChars(part,[0x4e07,0x4e8b,0x8fBE]); // \u4e07\u4e8b\u8fbe
+    var ouz=hasChars(part,[0x6b27,0x6d32]); // \u6b27\u6d32
+    var zg=hasChars(part,[0x4e2d,0x56fd]); // \u4e2d\u56fd
+    var hz=hasChars(part,[0x5f88,0x8d5e]); // \u5f88\u8d5e
 
-    // Status detection
-    if (part.indexOf(K.kaihuchenggong) >= 0) {
-      rec.cardStatus = K.kaihuchenggong; rec.path = 1;
-    } else if (part.indexOf(K.yiwancheng) >= 0) {
-      rec.cardStatus = K.yiwancheng; rec.path = 1;
-    } else if (part.indexOf(K.yiqiyong) >= 0) {
-      rec.cardStatus = K.yiqiyong; rec.path = 2;
-    } else if (part.indexOf(K.yiyouji) >= 0) {
-      rec.cardStatus = K.yiyouji; rec.path = 2;
-    } else if (part.indexOf(K.yishenpi) >= 0) {
-      rec.cardStatus = K.yishenpi; rec.path = 2;
-    } else if (part.indexOf(K.kaihu) >= 0) {
-      rec.cardStatus = K.kaihuchenggong; rec.path = 1;
+    if(ouz){
+      rec.cardName='\u6b27\u6d32\u65c5\u884c\u5361';
+    }else if(fd&&wsd){
+      rec.cardName='\u594b\u6597\u4e07\u4e8b\u8fbe\u7b80\u7ea6\u767d\u91d1\u5361';
+    }else if(fd&&(zg||hz)){
+      rec.cardName='\u594b\u6597\u4e2d\u56fd\u5f88\u8d5eM\u767d\u91d1';
+    }else if(fd){
+      rec.cardName='\u594b\u6597\u4e07\u4e8b\u8fbe\u7b80\u7ea6\u767d\u91d1\u5361';
     }
+    console.log('  Card name:',rec.cardName);
 
-    if (rec.cardName || rec.applyDate || rec.cardStatus) {
+    // Find status
+    var khcg=hasChars(part,[0x5f00,0x6237,0x6210,0x529f]); // \u5f00\u6237\u6210\u529f
+    var ywc=hasChars(part,[0x5df2,0x5b8c,0x6210]); // \u5df2\u5b8c\u6210
+    var yqy=hasChars(part,[0x5df2,0x542f,0x7528]); // \u5df2\u542f\u7528
+    var yyj=hasChars(part,[0x5df2,0x90ae,0x5bc4]); // \u5df2\u90ae\u5bc4
+    var ysp=hasChars(part,[0x5df2,0x5ba1,0x6279]); // \u5df2\u5ba1\u6279
+    var kh=hasChars(part,[0x5f00,0x6237]); // \u5f00\u6237
+
+    if(khcg){rec.cardStatus='\u5f00\u6237\u6210\u529f';rec.path=1;}
+    else if(ywc){rec.cardStatus='\u5df2\u5b8c\u6210';rec.path=1;}
+    else if(yqy){rec.cardStatus='\u5df2\u542f\u7528';rec.path=2;}
+    else if(yyj){rec.cardStatus='\u5df2\u90ae\u5bc4';rec.path=2;}
+    else if(ysp){rec.cardStatus='\u5df2\u5ba1\u6279';rec.path=2;}
+    else if(kh){rec.cardStatus='\u5f00\u6237\u6210\u529f';rec.path=1;}
+    console.log('  Status:',rec.cardStatus);
+
+    if(rec.cardName||rec.applyDate||rec.cardStatus){
       records.push(rec);
-      console.log('Record', i, ':', JSON.stringify(rec));
     }
   }
 
-  console.log('Total records:', records.length);
+  console.log('Total records:',records.length);
 
-  if (records.length === 0) {
-    showResult(false, [], String.fromCharCode(0x672a, 0x8bc6, 0x522b, 0x5230, 0x6709, 0x6548, 0x4fe1, 0x606f), true, text);
+  // Fallback: if no records found by ID splitting, try splitting by "申请单"
+  if(records.length===0){
+    var sqd=String.fromCharCode(0x7533,0x8bf7,0x5355);
+    var parts=txt.split(sqd);
+    console.log('Fallback split:',parts.length,'parts');
+    for(var j=1;j<parts.length;j++){
+      var p=parts[j];
+      var rec2={cardName:'',applyDate:'',cardStatus:'',path:1};
+      var dm2=p.match(/(\d{4})[-\/](\d{1,2})[-\/](\d{1,2})/);
+      if(dm2)rec2.applyDate=dm2[1]+'-'+(dm2[2].length<2?'0'+dm2[2]:dm2[2])+'-'+(dm2[3].length<2?'0'+dm2[3]:dm2[3]);
+      if(hasChars(p,[0x594b,0x6597]))rec2.cardName='\u594b\u6597\u4e07\u4e8b\u8fbe\u7b80\u7ea6\u767d\u91d1\u5361';
+      else if(hasChars(p,[0x6b27,0x6d32]))rec2.cardName='\u6b27\u6d32\u65c5\u884c\u5361';
+      if(hasChars(p,[0x5f00,0x6237,0x6210,0x529f])){rec2.cardStatus='\u5f00\u6237\u6210\u529f';rec2.path=1;}
+      else if(hasChars(p,[0x5df2,0x5b8c,0x6210])){rec2.cardStatus='\u5df2\u5b8c\u6210';rec2.path=1;}
+      else if(hasChars(p,[0x5f00,0x6237])){rec2.cardStatus='\u5f00\u6237\u6210\u529f';rec2.path=1;}
+      if(rec2.cardName||rec2.applyDate||rec2.cardStatus)records.push(rec2);
+    }
+  }
+
+  if(records.length===0){
+    showResult(false,[],'\u672a\u8bc6\u522b\u5230\u6709\u6548\u4fe1\u606f',true,txt);
     return;
   }
 
-  var results = [];
-  for (var r = 0; r < records.length; r++) {
-    var rec = records[r];
-    var pass = true;
-    var reasons = [];
-
-    if (!rec.cardName || validCards.indexOf(rec.cardName) === -1) {
-      pass = false;
-      reasons.push(String.fromCharCode(0x5361, 0x79cd, 0x4e0d, 0x7b26, 0x5408) + '(' + (rec.cardName || String.fromCharCode(0x672a, 0x8bc6, 0x522b)) + ')');
+  var results=[];
+  var validCards=['\u594b\u6597\u4e07\u4e8b\u8fbe\u7b80\u7ea6\u767d\u91d1\u5361','\u6b27\u6d32\u65c5\u884c\u5361','\u594b\u6597\u4e2d\u56fd\u5f88\u8d5eM\u767d\u91d1'];
+  for(var r=0;r<records.length;r++){
+    var rc=records[r];
+    var pass=true;
+    var reasons=[];
+    if(!rc.cardName||validCards.indexOf(rc.cardName)===-1){pass=false;reasons.push('\u5361\u79cd\u4e0d\u7b26\u5408('+rc.cardName+')');}
+    if(!rc.applyDate){pass=false;reasons.push('\u65e5\u671f\u672a\u8bc6\u522b');}
+    else if(rc.applyDate<minDate){pass=false;reasons.push('\u65e5\u671f\u4e0d\u7b26\u5408');}
+    if(!rc.cardStatus){pass=false;reasons.push('\u72b6\u6001\u672a\u8bc6\u522b');}
+    else{
+      var exp=rc.path===1?['\u5f00\u6237\u6210\u529f','\u5df2\u5b8c\u6210']:['\u5df2\u542f\u7528','\u5df2\u90ae\u5bc4','\u5df2\u5ba1\u6279'];
+      if(exp.indexOf(rc.cardStatus)===-1){pass=false;reasons.push('\u72b6\u6001\u4e0d\u7b26\u5408');}
     }
-    if (!rec.applyDate) {
-      pass = false;
-      reasons.push(String.fromCharCode(0x65e5, 0x671f, 0x672a, 0x8bc6, 0x522b));
-    } else if (rec.applyDate < minDate) {
-      pass = false;
-      reasons.push(String.fromCharCode(0x65e5, 0x671f, 0x4e0d, 0x7b26, 0x5408));
-    }
-    if (!rec.cardStatus) {
-      pass = false;
-      reasons.push(String.fromCharCode(0x72b6, 0x6001, 0x672a, 0x8bc6, 0x522b));
-    } else {
-      var expected = rec.path === 1 ? path1Statuses : path2Statuses;
-      if (expected.indexOf(rec.cardStatus) === -1) {
-        pass = false;
-        reasons.push(String.fromCharCode(0x72b6, 0x6001, 0x4e0d, 0x7b26, 0x5408));
-      }
-    }
-
-    results.push({
-      cardName: rec.cardName || String.fromCharCode(0x672a, 0x8bc6, 0x522b),
-      pass: pass,
-      reason: reasons.join(String.fromCharCode(0x3001)),
-      date: rec.applyDate || '-',
-      status: rec.cardStatus || '-'
-    });
-
-    saveHistory(pass, rec.cardName || String.fromCharCode(0x672a, 0x77e5), rec.path, rec.applyDate || '-', rec.cardStatus || '-');
+    results.push({cardName:rc.cardName||'\u672a\u8bc6\u522b',pass:pass,reason:reasons.join('\u3001'),date:rc.applyDate||'-',status:rc.cardStatus||'-'});
+    saveHistory(pass,rc.cardName||'\u672a\u77e5',rc.path,rc.applyDate||'-',rc.cardStatus||'-');
   }
 
-  var hasAnyPass = results.some(function(x) { return x.pass; });
-  showResult(hasAnyPass, results, null, !hasAnyPass, text);
+  var hp=results.some(function(x){return x.pass;});
+  showResult(hp,results,null,!hp,txt);
 }
 
-function showResult(hasPass, results, errorMsg, showDebug, rawText) {
-  var card = document.getElementById('resultCard');
-  card.className = 'result-card show ' + (hasPass ? 'pass' : 'fail');
-  card.style.display = 'block';
-
-  var html = '';
-
-  if (errorMsg) {
-    html += '<div class="result-icon">\u26a0\ufe0f</div>';
-    html += '<div class="result-title">' + errorMsg + '</div>';
-  } else {
-    var totalPass = 0;
-    for (var i = 0; i < results.length; i++) {
-      if (results[i].pass) totalPass++;
-    }
-    var totalFail = results.length - totalPass;
-
-    html += '<div class="result-icon">' + (hasPass ? '\u2705' : '\u274c') + '</div>';
-    html += '<div class="result-title">' +
-      String.fromCharCode(0x5171, 0x8bc6, 0x522b) + ' ' + results.length + ' ' +
-      String.fromCharCode(0x6761, 0x8bb0, 0x5f55, 0xff0c) + totalPass + ' ' +
-      String.fromCharCode(0x6761, 0x901a, 0x8fc7, 0xff0c) + totalFail + ' ' +
-      String.fromCharCode(0x6761, 0x4e0d, 0x901a, 0x8fc7);
-    if (hasPass) {
-      html += ' \u2014 ' + String.fromCharCode(0x6709, 0x7b26, 0x5408, 0x6761, 0x4ef6, 0x7684, 0x8bb0, 0x5f55, 0xff0c, 0x53ef, 0x4ee5, 0x9886, 0x53d6, 0x793c, 0x54c1) + ' \ud83c\udf81';
-    }
-    html += '</div>';
-    html += '<div class="result-details">';
-
-    for (var j = 0; j < results.length; j++) {
-      var r = results[j];
-      var icon = r.pass ? '\u2705' : '';
-      var color = r.pass ? 'var(--success)' : 'var(--fail)';
-      var label = r.pass ? String.fromCharCode(0x901a, 0x8fc7) : String.fromCharCode(0x4e0d, 0x901a, 0x8fc7);
-      html += '<div style="padding:10px 0;border-bottom:1px dashed var(--border);">';
-      html += '<div style="font-weight:600;margin-bottom:4px;">' + icon + ' ' + r.cardName + '</div>';
-      html += '<div style="font-size:12px;color:var(--text-secondary);">' +
-        String.fromCharCode(0x65e5, 0x671f) + ': ' + r.date + ' | ' +
-        String.fromCharCode(0x72b6, 0x6001) + ': ' + r.status + '</div>';
-      html += '<div style="font-size:13px;font-weight:600;margin-top:4px;color:' + color + ';">' + label;
-      if (!r.pass && r.reason) {
-        html += ' \u2014 ' + r.reason;
-      }
-      html += '</div></div>';
-    }
-    html += '</div>';
+// Check if text contains ALL chars with given code points
+function hasChars(text,codePoints){
+  for(var i=0;i<codePoints.length;i++){
+    if(text.indexOf(String.fromCharCode(codePoints[i]))===-1)return false;
   }
+  return true;
+}
 
-  if (showDebug && rawText) {
-    html += '<div class="ocr-debug"><strong>OCR\u8bc6\u522b\u539f\u6587\uff1a</strong>\n' + escapeHtml(rawText.substring(0, 800)) + '</div>';
+function showResult(hp,results,em,debug,raw){
+  var c=document.getElementById('resultCard');
+  c.className='result-card show '+(hp?'pass':'fail');
+  c.style.display='block';
+  var html='';
+  if(em){
+    html+='<div class="result-icon">\u26a0\ufe0f</div><div class="result-title">'+em+'</div>';
+  }else{
+    var tp=0;for(var i=0;i<results.length;i++){if(results[i].pass)tp++;}
+    html+='<div class="result-icon">'+(hp?'\u2705':'')+'</div>';
+    html+='<div class="result-title">\u5171\u8bc6\u522b '+results.length+' \u6761\u8bb0\u5f55\uff0c'+tp+' \u6761\u901a\u8fc7\uff0c'+(results.length-tp)+' \u6761\u4e0d\u901a\u8fc7';
+    if(hp)html+=' \u2014 \u6709\u7b26\u5408\u6761\u4ef6\u7684\u8bb0\u5f55\uff0c\u53ef\u4ee5\u9886\u53d6\u793c\u54c1 \ud83c\udf81';
+    html+='</div><div class="result-details">';
+    for(var j=0;j<results.length;j++){
+      var r=results[j];
+      html+='<div style="padding:10px 0;border-bottom:1px dashed var(--border);">';
+      html+='<div style="font-weight:600;margin-bottom:4px;">'+(r.pass?'\u2705':'')+' '+r.cardName+'</div>';
+      html+='<div style="font-size:12px;color:var(--text-secondary);">\u65e5\u671f: '+r.date+' | \u72b6\u6001: '+r.status+'</div>';
+      html+='<div style="font-size:13px;font-weight:600;margin-top:4px;color:'+(r.pass?'var(--success)':'var(--fail))+';">'+(r.pass?'\u901a\u8fc7':'\u4e0d\u901a\u8fc7');
+      if(!r.pass&&r.reason)html+=' \u2014 '+r.reason;
+      html+='</div></div>';
+    }
+    html+='</div>';
   }
-
-  card.innerHTML = html;
-  card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  if(debug&&raw)html+='<div class="ocr-debug"><strong>OCR\u539f\u6587:</strong>\n'+esc(raw.substring(0,800))+'</div>';
+  c.innerHTML=html;
+  c.scrollIntoView({behavior:'smooth',block:'center'});
 }
 
-function escapeHtml(text) {
-  var div = document.createElement('div');
-  div.appendChild(document.createTextNode(text));
-  return div.innerHTML;
-}
+function esc(t){var d=document.createElement('div');d.appendChild(document.createTextNode(t));return d.innerHTML;}
 
-function saveHistory(pass, cardName, path, date, status) {
-  try {
-    var history = JSON.parse(localStorage.getItem('bjck_history') || '[]');
-    var now = new Date();
-    var timeStr = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' +
-      String(now.getDate()).padStart(2,'0') + ' ' + String(now.getHours()).padStart(2,'0') + ':' +
-      String(now.getMinutes()).padStart(2,'0') + ':' + String(now.getSeconds()).padStart(2,'0');
-    history.unshift({ time: timeStr, pass: pass, cardName: cardName, path: path, date: date, status: status });
-    if (history.length > 50) history.length = 50;
-    localStorage.setItem('bjck_history', JSON.stringify(history));
+function saveHistory(p,cn,pa,d,st){
+  try{
+    var h=JSON.parse(localStorage.getItem('bjck_history')||'[]');
+    var n=new Date();
+    var ts=n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-'+String(n.getDate()).padStart(2,'0')+' '+String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0')+':'+String(n.getSeconds()).padStart(2,'0');
+    h.unshift({time:ts,pass:p,cardName:cn,path:pa,date:d,status:st});
+    if(h.length>50)h.length=50;
+    localStorage.setItem('bjck_history',JSON.stringify(h));
     renderHistory();
-  } catch(e) {}
+  }catch(e){}
 }
 
-function renderHistory() {
-  try {
-    var history = JSON.parse(localStorage.getItem('bjck_history') || '[]');
-    var section = document.getElementById('historySection');
-    var list = document.getElementById('historyList');
-    if (history.length === 0) { section.style.display = 'none'; return; }
-    section.style.display = 'block';
-    var html = '';
-    for (var i = 0; i < history.length; i++) {
-      var h = history[i];
-      html += '<div class="history-item">' +
-        '<div class="hi-top"><span class="hi-card">' + h.cardName + '</span>' +
-        '<span class="hi-status ' + (h.pass ? 'pass' : 'fail') + '">' +
-        (h.pass ? String.fromCharCode(0x901a, 0x8fc7) : String.fromCharCode(0x4e0d, 0x901a, 0x8fc7)) +
-        '</span></div>' +
-        '<div class="hi-detail">' + String.fromCharCode(0x8def, 0x5f84) + h.path +
-        ' \u00b7 ' + String.fromCharCode(0x7533, 0x8bf7, 0x65e5, 0x671f) + ' ' + h.date +
-        ' \u00b7 ' + String.fromCharCode(0x72b6, 0x6001) + ' ' + h.status + '</div>' +
-        '<div class="hi-time">' + h.time + '</div></div>';
+function renderHistory(){
+  try{
+    var h=JSON.parse(localStorage.getItem('bjck_history')||'[]');
+    var s=document.getElementById('historySection');
+    var l=document.getElementById('historyList');
+    if(h.length===0){s.style.display='none';return;}
+    s.style.display='block';
+    var html='';
+    for(var i=0;i<h.length;i++){
+      var x=h[i];
+      html+='<div class="history-item"><div class="hi-top"><span class="hi-card">'+x.cardName+'</span><span class="hi-status '+(x.pass?'pass':'fail')+'">'+(x.pass?'\u901a\u8fc7':'\u4e0d\u901a\u8fc7')+'</span></div><div class="hi-detail">\u8def\u5f84'+x.path+' \u00b7 \u7533\u8bf7\u65e5\u671f '+x.date+' \u00b7 \u72b6\u6001 '+x.status+'</div><div class="hi-time">'+x.time+'</div></div>';
     }
-    list.innerHTML = html;
-  } catch(e) {}
+    l.innerHTML=html;
+  }catch(e){}
 }
 
-function clearHistory() {
-  if (confirm(String.fromCharCode(0x786e, 0x8ba4, 0x6e05, 0x7a7a, 0x6240, 0x6709, 0x6838, 0x9a8c, 0x8bb0, 0x5f55, 0xff1f))) {
-    localStorage.removeItem('bjck_history');
-    renderHistory();
+function clearHistory(){
+  if(confirm('\u786e\u8ba4\u6e05\u7a7a\u6240\u6709\u6838\u9a8c\u8bb0\u5f55\uff1f')){
+    localStorage.removeItem('bjck_history');renderHistory();
   }
 }
 
 renderHistory();
-</script>
+<\/script>
 </body>
 </html>
