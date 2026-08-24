@@ -77,13 +77,18 @@ body {
 .result-details .item:last-child { border-bottom: none; }
 .result-details .item .k { color: var(--text-secondary); }
 .result-details .item .v { font-weight: 600; }
+.ocr-debug {
+  background: #f0f0f0; border-radius: 8px; padding: 10px; margin-top: 12px;
+  font-size: 11px; color: #666; max-height: 150px; overflow-y: auto;
+  white-space: pre-wrap; word-break: break-all;
+}
 .history-section { margin-top: 8px; }
 .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
 .history-header h3 { font-size: 15px; font-weight: 600; }
 .history-clear { font-size: 12px; color: var(--primary); background: none; border: none; cursor: pointer; }
 .history-item {
   background: var(--card); border-radius: 12px; padding: 14px; margin-bottom: 8px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.04); animation: fadeIn 0.25s ease;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
 }
 .history-item .hi-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
 .history-item .hi-card { font-weight: 600; font-size: 14px; }
@@ -93,22 +98,20 @@ body {
 .history-item .hi-status.pass { background: var(--success-bg); color: var(--success); }
 .history-item .hi-status.fail { background: var(--fail-bg); color: var(--fail); }
 .footer { text-align: center; padding: 20px 16px 30px; font-size: 11px; color: #999; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-.result-card.show { display: block; animation: fadeIn 0.3s ease; }
 </style>
 </head>
 <body>
 
 <div class="header">
-  <h1>🏆 比利·简·金杯</h1>
-  <div class="subtitle">工商银行联名卡 · 下卡核验</div>
-  <div class="badge">礼品领取资格 · 现场检查</div>
+  <h1>&#x1F3C6; 比利&#x00B7;简&#x00B7;金杯</h1>
+  <div class="subtitle">工商银行联名卡 &#x00B7; 下卡核验</div>
+  <div class="badge">礼品领取资格 &#x00B7; 现场检查</div>
 </div>
 
 <div class="container">
   <div class="upload-card">
     <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
-      <div class="upload-icon">📷</div>
+      <div class="upload-icon">&#x1F4F7;</div>
       <div class="upload-text">点击上传或拍照</div>
       <div class="upload-hint">上传客户工行APP截图，自动识别核验</div>
     </div>
@@ -117,15 +120,15 @@ body {
 
   <div class="preview-card" id="previewCard" style="display:none">
     <div class="preview-top">
-      <span>📷 已上传截图</span>
+      <span>&#x1F4F7; 已上传截图</span>
       <button class="btn-change" onclick="document.getElementById('fileInput').click()">重新选择</button>
     </div>
     <img id="previewImg" src="" alt="preview">
   </div>
 
   <div class="progress-card" id="progressCard" style="display:none">
-    <div class="progress-icon">⏳</div>
-    <div class="progress-title">正在识别截图…</div>
+    <div class="progress-icon">&#x23F3;</div>
+    <div class="progress-title">正在识别截图&#x2026;</div>
     <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
     <div class="progress-text" id="progressText">初始化中</div>
   </div>
@@ -134,259 +137,284 @@ body {
 
   <div class="history-section" id="historySection" style="display:none">
     <div class="history-header">
-      <h3>📋 核验记录</h3>
+      <h3>&#x1F4CB; 核验记录</h3>
       <button class="history-clear" onclick="clearHistory()">清空记录</button>
     </div>
     <div id="historyList"></div>
   </div>
 
   <div class="footer">
-    比利·简·金杯赛事 · 工商银行联名卡推广<br>
-    现场核验工具 v3.1 · 支持多记录识别
+    比利&#x00B7;简&#x00B7;金杯赛事 &#x00B7; 工商银行联名卡推广<br>
+    现场核验工具 v4.1 &#x00B7; 支持多记录识别
   </div>
 </div>
 
 <script>
-const validCards = ['奋斗万事达简约白金卡', '欧洲旅行卡', '奋斗中国很赞M白金'];
-const path1Statuses = ['开户成功', '已完成'];
-const path2Statuses = ['已启用', '已邮寄', '已审批'];
-const minDate = '2025-01-01';
+var validCards = ['\u594b\u6597\u4e07\u4e8b\u8fbe\u7b80\u7ea6\u767d\u91d1\u5361', '\u6b27\u6d32\u65c5\u884c\u5361', '\u594b\u6597\u4e2d\u56fd\u5f88\u8d5eM\u767d\u91d1'];
+var path1Statuses = ['\u5f00\u6237\u6210\u529f', '\u5df2\u5b8c\u6210'];
+var path2Statuses = ['\u5df2\u542f\u7528', '\u5df2\u90ae\u5bc4', '\u5df2\u5ba1\u6279'];
+var minDate = '2025-01-01';
 
 function handleUpload(event) {
-  const file = event.target.files[0];
+  var file = event.target.files[0];
   if (!file) return;
-  const reader = new FileReader();
+  var reader = new FileReader();
   reader.onload = function(e) {
     document.getElementById('previewImg').src = e.target.result;
     document.getElementById('previewCard').style.display = 'block';
     document.getElementById('progressCard').style.display = 'block';
-    const rc = document.getElementById('resultCard');
+    var rc = document.getElementById('resultCard');
     rc.style.display = 'none';
     rc.className = 'result-card';
     document.getElementById('progressFill').style.width = '0%';
-    document.getElementById('progressText').textContent = '初始化中…';
+    document.getElementById('progressText').textContent = '\u521d\u59cb\u5316\u4e2d\u2026';
     runOCR(e.target.result);
   };
   reader.readAsDataURL(file);
 }
 
 function runOCR(imageSrc) {
-  Tesseract.recognize(imageSrc, 'chi_sim+eng', {
+  Tesseract.recognize(imageSrc, 'chi_sim', {
     logger: function(m) {
       if (m.status === 'recognizing text') {
-        const pct = Math.round(m.progress * 100);
+        var pct = Math.round(m.progress * 100);
         document.getElementById('progressFill').style.width = pct + '%';
-        document.getElementById('progressText').textContent = '正在识别… ' + pct + '%';
+        document.getElementById('progressText').textContent = '\u6b63\u5728\u8bc6\u522b\u2026 ' + pct + '%';
       } else if (m.status) {
         document.getElementById('progressText').textContent = m.status;
       }
     }
   }).then(function(result) {
-    const text = result.data.text;
-    console.log('OCR raw text:', text);
+    var text = result.data.text;
+    console.log('OCR text:', text);
     document.getElementById('progressCard').style.display = 'none';
     parseAndVerify(text);
   }).catch(function(err) {
-    console.error('OCR failed:', err);
+    console.error('OCR error:', err);
     document.getElementById('progressCard').style.display = 'none';
-    const rc = document.getElementById('resultCard');
-    rc.className = 'result-card show fail';
-    rc.innerHTML = '<div class="result-icon">\u274C</div><div class="result-title">\u8BC6\u522B\u5931\u8D25</div><div class="result-details">\u8BF7\u91CD\u65B0\u62CD\u7167\u6216\u4E0A\u4F20</div>';
-    rc.style.display = 'block';
+    showResult(false, [], 'OCR\u8bc6\u522b\u5931\u8d25', true, 'error: ' + err);
   });
 }
 
 function parseAndVerify(text) {
-  console.log('Parsing text length:', text.length);
-  const records = [];
-  
-  // Split by various possible delimiters
-  // Try splitting by "申请单" first, then fallback to line-by-line grouping
-  let entries = text.split(/\u7533\u8BF7\u5355[\s:：]*/);
-  
-  // If no entries found, try alternative splitting
-  if (entries.length <= 1) {
-    // Split by double newlines or common patterns
-    entries = text.split(/\n\n+|\r\n\r\n+/);
-  }
-  
-  console.log('Found', entries.length, 'potential entries');
-  
-  for (const entry of entries) {
-    if (!entry.trim()) continue;
-    const rec = { cardName: '', applyDate: '', cardStatus: '', path: 1 };
-    
-    // Card name detection - look for known patterns
-    if (entry.includes('\u6B27\u6D32\u65C5\u884C') || entry.includes('\u6B27\u6D32')) {
-      rec.cardName = '\u6B27\u6D32\u65C5\u884C\u5361';
-    } else if (entry.includes('\u594B\u6597\u4E07\u4E8B\u8FBE')) {
-      rec.cardName = '\u594B\u6597\u4E07\u4E8B\u8FBE\u7B80\u7EA6\u767D\u91D1\u5361';
-    } else if (entry.includes('\u594B\u6597\u4E2D\u56FD\u5F88\u8D5E')) {
-      rec.cardName = '\u594B\u6597\u4E2D\u56FD\u5F88\u8D5EM\u767D\u91D1';
-    } else if (entry.includes('\u594B\u6597') && entry.includes('\u767D\u91D1')) {
-      rec.cardName = '\u594B\u6597\u4E07\u4E8B\u8FBE\u7B80\u7EA6\u767D\u91D1\u5361';
-    } else if (entry.includes('\u594B\u6597')) {
-      // Just "奋斗" - check if it's one of our valid cards
-      rec.cardName = '\u594B\u6597\u4E07\u4E8B\u8FBE\u7B80\u7EA6\u767D\u91D1\u5361';
+  console.log('=== RAW OCR TEXT ===');
+  console.log(text);
+  console.log('=== END RAW OCR ===');
+
+  var records = [];
+
+  // Strategy: split by "申请单" keyword which appears at start of each card entry
+  // Pattern: 申请单 followed by digits
+  var parts = text.split(/\u7533\u8bf7\u5355/);
+
+  console.log('Split into', parts.length, 'parts by "\u7533\u8bf7\u5355"');
+
+  for (var i = 1; i < parts.length; i++) {
+    var part = parts[i];
+    console.log('Part', i, ':', part.substring(0, 200));
+
+    var rec = { cardName: '', applyDate: '', cardStatus: '', path: 1 };
+
+    // Get first few lines of this part (card name is usually in the first 1-2 lines)
+    var lines = part.split(/\r?\n/);
+    var headerLines = lines.slice(0, 4).join('\n');
+
+    // Card name detection - check first few lines for keywords
+    if (headerLines.indexOf('\u6b27\u6d32') >= 0) {
+      rec.cardName = '\u6b27\u6d32\u65c5\u884c\u5361';
+    } else if (headerLines.indexOf('\u594b\u6597') >= 0 && headerLines.indexOf('\u4e07\u4e8b\u8fbe') >= 0) {
+      rec.cardName = '\u594b\u6597\u4e07\u4e8b\u8fbe\u7b80\u7ea6\u767d\u91d1\u5361';
+    } else if (headerLines.indexOf('\u594b\u6597') >= 0 && (headerLines.indexOf('\u5f88\u8d5e') >= 0 || headerLines.indexOf('\u4e2d\u56fd') >= 0)) {
+      rec.cardName = '\u594b\u6597\u4e2d\u56fd\u5f88\u8d5eM\u767d\u91d1';
+    } else if (headerLines.indexOf('\u594b\u6597') >= 0) {
+      // If just "\u594b\u6597" is found, assume it's the target card
+      rec.cardName = '\u594b\u6597\u4e07\u4e8b\u8fbe\u7b80\u7ea6\u767d\u91d1\u5361';
+    } else if (headerLines.indexOf('\u4e07\u8c61') >= 0) {
+      // Fallback: check if it's the 万象星联名卡
+      rec.cardName = '\u4e07\u8c61\u661f\u8054\u540d\u5361';
+    } else if (headerLines.indexOf('\u7261\u4e39') >= 0) {
+      rec.cardName = '\u7261\u4e39\u4e07\u4e8b\u8fbe\u767d\u91d1\u5361';
     }
-    
-    // Date detection - multiple patterns
-    let dateMatch = entry.match(/(\d{4})[-\/\u5E74](\d{1,2})[-\/\u6708](\d{1,2})/);
-    if (dateMatch) {
-      rec.applyDate = dateMatch[1] + '-' + dateMatch[2].padStart(2, '0') + '-' + dateMatch[3].padStart(2, '0');
+
+    // Date detection - search all lines of this part
+    for (var l = 0; l < lines.length; l++) {
+      var dateMatch = lines[l].match(/(\d{4})[-\/\u5e74](\d{1,2})[-\/\u6708](\d{1,2})/);
+      if (dateMatch && !rec.applyDate) {
+        rec.applyDate = dateMatch[1] + '-' +
+          (dateMatch[2].length < 2 ? '0' + dateMatch[2] : dateMatch[2]) + '-' +
+          (dateMatch[3].length < 2 ? '0' + dateMatch[3] : dateMatch[3]);
+      }
     }
-    
-    // Status detection
-    if (entry.includes('\u5F00\u6237\u6210\u529F')) {
-      rec.cardStatus = '\u5F00\u6237\u6210\u529F';
-      rec.path = 1;
-    } else if (entry.includes('\u5DF2\u5B8C\u6210')) {
-      rec.cardStatus = '\u5DF2\u5B8C\u6210';
-      rec.path = 1;
-    } else if (entry.includes('\u5DF2\u542F\u7528')) {
-      rec.cardStatus = '\u5DF2\u542F\u7528';
-      rec.path = 2;
-    } else if (entry.includes('\u5DF2\u90AE\u5BC4')) {
-      rec.cardStatus = '\u5DF2\u90AE\u5BC4';
-      rec.path = 2;
-    } else if (entry.includes('\u5DF2\u5BA1\u6279')) {
-      rec.cardStatus = '\u5DF2\u5BA1\u6279';
-      rec.path = 2;
+
+    // Status detection - search all lines, also look for partial matches
+    var fullPart = part;
+    if (fullPart.indexOf('\u5f00\u6237\u6210\u529f') >= 0) {
+      rec.cardStatus = '\u5f00\u6237\u6210\u529f'; rec.path = 1;
+    } else if (fullPart.indexOf('\u5df2\u5b8c\u6210') >= 0) {
+      rec.cardStatus = '\u5df2\u5b8c\u6210'; rec.path = 1;
+    } else if (fullPart.indexOf('\u5df2\u542f\u7528') >= 0) {
+      rec.cardStatus = '\u5df2\u542f\u7528'; rec.path = 2;
+    } else if (fullPart.indexOf('\u5df2\u90ae\u5bc4') >= 0) {
+      rec.cardStatus = '\u5df2\u90ae\u5bc4'; rec.path = 2;
+    } else if (fullPart.indexOf('\u5df2\u5ba1\u6279') >= 0) {
+      rec.cardStatus = '\u5df2\u5ba1\u6279'; rec.path = 2;
+    } else if (fullPart.indexOf('\u5f00\u6237') >= 0) {
+      // Partial match for "\u5f00\u6237"
+      rec.cardStatus = '\u5f00\u6237\u6210\u529f'; rec.path = 1;
     }
-    
-    // Only add if we found at least one piece of info
+
     if (rec.cardName || rec.applyDate || rec.cardStatus) {
       records.push(rec);
-      console.log('Parsed record:', rec);
+      console.log('Record', i, ':', JSON.stringify(rec));
     }
   }
-  
+
+  console.log('Total records:', records.length);
+
   if (records.length === 0) {
-    console.log('No records parsed. Raw text:', text.substring(0, 500));
-    const rc = document.getElementById('resultCard');
-    rc.className = 'result-card show fail';
-    rc.innerHTML = '<div class="result-icon">\u26A0\uFE0F</div><div class="result-title">\u672A\u8BC6\u522B\u5230\u6709\u6548\u4FE1\u606F</div><div class="result-details">\u8BF7\u786E\u4FDD\u622A\u56FE\u6E05\u6670\uFF0C\u5305\u542B\u5361\u7247\u540D\u79F0\u3001\u65E5\u671F\u548C\u72B6\u6001</div>';
-    rc.style.display = 'block';
+    showResult(false, [], '\u672a\u8bc6\u522b\u5230\u6709\u6548\u4fe1\u606f', true, text);
     return;
   }
-  
-  const results = [];
-  for (const rec of records) {
-    let pass = true;
-    let reasons = [];
-    
-    if (!rec.cardName || !validCards.includes(rec.cardName)) {
+
+  var results = [];
+  for (var r = 0; r < records.length; r++) {
+    var rec = records[r];
+    var pass = true;
+    var reasons = [];
+
+    if (!rec.cardName || validCards.indexOf(rec.cardName) === -1) {
       pass = false;
-      reasons.push('\u5361\u79CD\u4E0D\u7B26\u5408');
+      reasons.push('\u5361\u79cd\u4e0d\u7b26\u5408(' + (rec.cardName || '\u672a\u8bc6\u522b') + ')');
     }
     if (!rec.applyDate) {
       pass = false;
-      reasons.push('\u65E5\u671F\u672A\u8BC6\u522B');
+      reasons.push('\u65e5\u671f\u672a\u8bc6\u522b');
     } else if (rec.applyDate < minDate) {
       pass = false;
-      reasons.push('\u65E5\u671F\u4E0D\u7B26\u5408');
+      reasons.push('\u65e5\u671f\u4e0d\u7b26\u5408');
     }
     if (!rec.cardStatus) {
       pass = false;
-      reasons.push('\u72B6\u6001\u672A\u8BC6\u522B');
+      reasons.push('\u72b6\u6001\u672a\u8bc6\u522b');
     } else {
-      const expected = rec.path === 1 ? path1Statuses : path2Statuses;
-      if (!expected.includes(rec.cardStatus)) {
+      var expected = rec.path === 1 ? path1Statuses : path2Statuses;
+      if (expected.indexOf(rec.cardStatus) === -1) {
         pass = false;
-        reasons.push('\u72B6\u6001\u4E0D\u7B26\u5408');
+        reasons.push('\u72b6\u6001\u4e0d\u7b26\u5408');
       }
     }
-    
+
     results.push({
-      cardName: rec.cardName || '\u672A\u8BC6\u522B',
-      pass, reason: reasons.join('\u3001'),
-      date: rec.applyDate || '-', status: rec.cardStatus || '-'
+      cardName: rec.cardName || '\u672a\u8bc6\u522b',
+      pass: pass,
+      reason: reasons.join('\u3001'),
+      date: rec.applyDate || '-',
+      status: rec.cardStatus || '-'
     });
-    
-    saveHistory(pass, rec.cardName || '\u672A\u77E5', rec.path, rec.applyDate || '-', rec.cardStatus || '-');
+
+    saveHistory(pass, rec.cardName || '\u672a\u77e5', rec.path, rec.applyDate || '-', rec.cardStatus || '-');
   }
-  
-  showMultiResult(results);
+
+  var hasAnyPass = results.some(function(x) { return x.pass; });
+  showResult(hasAnyPass, results, null, !hasAnyPass, text);
 }
 
-function showSingleResult(pass, checks) {
-  const card = document.getElementById('resultCard');
-  card.className = 'result-card show ' + (pass ? 'pass' : 'fail');
-  
-  let html = '<div class="result-icon">' + (pass ? '\u2705' : '\u274C') + '</div>';
-  html += '<div class="result-title">' + (pass ? '\u7B26\u5408\u9886\u53D6\u8D44\u683C' : '\u4E0D\u7B26\u5408\u9886\u53D6\u8D44\u683C') + '</div>';
-  html += '<div class="result-details">';
-  checks.forEach(function(c) {
-    const icon = c.pass ? '\u2713' : '\u2717';
-    const color = c.pass ? 'var(--success)' : 'var(--fail)';
-    html += '<div class="item"><span class="k">' + icon + ' ' + c.name + '</span><span class="v" style="color:' + color + '">' + c.value + '</span></div>';
-  });
-  html += '</div>';
-  card.innerHTML = html;
-  card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-}
+function showResult(hasPass, results, errorMsg, showDebug, rawText) {
+  var card = document.getElementById('resultCard');
+  card.className = 'result-card show ' + (hasPass ? 'pass' : 'fail');
+  card.style.display = 'block';
 
-function showMultiResult(results) {
-  const card = document.getElementById('resultCard');
-  card.className = 'result-card show';
-  
-  const totalPass = results.filter(function(r) { return r.pass; }).length;
-  const totalFail = results.length - totalPass;
-  const hasAnyPass = totalPass > 0;
-  
-  card.style.background = hasAnyPass ? 'var(--success-bg)' : 'var(--fail-bg)';
-  card.style.border = hasAnyPass ? '1.5px solid var(--success)' : '1.5px solid var(--fail)';
-  card.className = 'result-card show ' + (hasAnyPass ? 'pass' : 'fail');
-  
-  let html = '<div class="result-icon">' + (hasAnyPass ? '\u2705' : '\u26A0\uFE0F') + '</div>';
-  html += '<div class="result-title">\u5171\u8BC6\u522B ' + results.length + ' \u6761\u8BB0\u5F55\uFF0C' + totalPass + ' \u6761\u901A\u8FC7\uFF0C' + totalFail + ' \u6761\u4E0D\u901A\u8FC7' + (hasAnyPass ? ' \u2014 \u6709\u7B26\u5408\u6761\u4EF6\u7684\u8BB0\u5F55\uFF0C\u53EF\u4EE5\u9886\u53D6\u793C\u54C1 \u{1F381}' : '') + '</div>';
-  html += '<div class="result-details">';
-  
-  results.forEach(function(r) {
-    const icon = r.pass ? '\u2705' : '';
-    const color = r.pass ? 'var(--success)' : 'var(--fail)';
-    const label = r.pass ? '\u901A\u8FC7' : '\u4E0D\u901A\u8FC7';
-    html += '<div style="padding:10px 0;border-bottom:1px dashed var(--border);">';
-    html += '<div style="font-weight:600;margin-bottom:4px;">' + icon + ' ' + r.cardName + '</div>';
-    html += '<div style="font-size:12px;color:var(--text-secondary);">\u65E5\u671F: ' + r.date + ' | \u72B6\u6001: ' + r.status + '</div>';
-    html += '<div style="font-size:13px;font-weight:600;margin-top:4px;color:' + color + ';">' + label + (!r.pass ? ' \u2014 ' + r.reason : '') + '</div>';
+  var html = '';
+
+  if (errorMsg) {
+    html += '<div class="result-icon">&#x26a0;&#xfe0f;</div>';
+    html += '<div class="result-title">' + errorMsg + '</div>';
+  } else {
+    var totalPass = 0;
+    for (var i = 0; i < results.length; i++) {
+      if (results[i].pass) totalPass++;
+    }
+    var totalFail = results.length - totalPass;
+
+    html += '<div class="result-icon">' + (hasPass ? '&#x2705;' : '&#x274c;') + '</div>';
+    html += '<div class="result-title">\u5171\u8bc6\u522b ' + results.length + ' \u6761\u8bb0\u5f55\uff0c' + totalPass + ' \u6761\u901a\u8fc7\uff0c' + totalFail + ' \u6761\u4e0d\u901a\u8fc7';
+    if (hasPass) {
+      html += ' &#x2014; \u6709\u7b26\u5408\u6761\u4ef6\u7684\u8bb0\u5f55\uff0c\u53ef\u4ee5\u9886\u53d6\u793c\u54c1 &#x1f381;';
+    }
     html += '</div>';
-  });
-  
-  html += '</div>';
+    html += '<div class="result-details">';
+
+    for (var j = 0; j < results.length; j++) {
+      var r = results[j];
+      var icon = r.pass ? '&#x2705;' : '';
+      var color = r.pass ? 'var(--success)' : 'var(--fail)';
+      var label = r.pass ? '\u901a\u8fc7' : '\u4e0d\u901a\u8fc7';
+      html += '<div style="padding:10px 0;border-bottom:1px dashed var(--border);">';
+      html += '<div style="font-weight:600;margin-bottom:4px;">' + icon + ' ' + r.cardName + '</div>';
+      html += '<div style="font-size:12px;color:var(--text-secondary);">\u65e5\u671f: ' + r.date + ' | \u72b6\u6001: ' + r.status + '</div>';
+      html += '<div style="font-size:13px;font-weight:600;margin-top:4px;color:' + color + ';">' + label;
+      if (!r.pass && r.reason) {
+        html += ' &#x2014; ' + r.reason;
+      }
+      html += '</div></div>';
+    }
+    html += '</div>';
+  }
+
+  if (showDebug && rawText) {
+    html += '<div class="ocr-debug"><strong>OCR\u8bc6\u522b\u539f\u6587\uff08\u8c03\u8bd5\uff09\uff1a</strong>\n' + escapeHtml(rawText.substring(0, 800)) + '</div>';
+  }
+
   card.innerHTML = html;
   card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function escapeHtml(text) {
+  var div = document.createElement('div');
+  div.appendChild(document.createTextNode(text));
+  return div.innerHTML;
 }
 
 function saveHistory(pass, cardName, path, date, status) {
-  const history = JSON.parse(localStorage.getItem('bjck_history') || '[]');
-  const now = new Date();
-  const timeStr = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' +
-    String(now.getDate()).padStart(2,'0') + ' ' + String(now.getHours()).padStart(2,'0') + ':' +
-    String(now.getMinutes()).padStart(2,'0') + ':' + String(now.getSeconds()).padStart(2,'0');
-  history.unshift({ time: timeStr, pass: pass, cardName: cardName, path: path, date: date, status: status });
-  if (history.length > 50) history.length = 50;
-  localStorage.setItem('bjck_history', JSON.stringify(history));
-  renderHistory();
+  try {
+    var history = JSON.parse(localStorage.getItem('bjck_history') || '[]');
+    var now = new Date();
+    var timeStr = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' +
+      String(now.getDate()).padStart(2,'0') + ' ' + String(now.getHours()).padStart(2,'0') + ':' +
+      String(now.getMinutes()).padStart(2,'0') + ':' + String(now.getSeconds()).padStart(2,'0');
+    history.unshift({ time: timeStr, pass: pass, cardName: cardName, path: path, date: date, status: status });
+    if (history.length > 50) history.length = 50;
+    localStorage.setItem('bjck_history', JSON.stringify(history));
+    renderHistory();
+  } catch(e) {
+    console.log('History save error:', e);
+  }
 }
 
 function renderHistory() {
-  const history = JSON.parse(localStorage.getItem('bjck_history') || '[]');
-  const section = document.getElementById('historySection');
-  const list = document.getElementById('historyList');
-  if (history.length === 0) { section.style.display = 'none'; return; }
-  section.style.display = 'block';
-  list.innerHTML = history.map(function(h) {
-    return '<div class="history-item">' +
-      '<div class="hi-top"><span class="hi-card">' + h.cardName + '</span>' +
-      '<span class="hi-status ' + (h.pass ? 'pass' : 'fail') + '">' + (h.pass ? '\u901A\u8FC7' : '\u4E0D\u901A\u8FC7') + '</span></div>' +
-      '<div class="hi-detail">\u8DEF\u5F84' + h.path + ' \u00B7 \u7533\u8BF7\u65E5\u671F ' + h.date + ' \u00B7 \u72B6\u6001 ' + h.status + '</div>' +
-      '<div class="hi-time">' + h.time + '</div></div>';
-  }).join('');
+  try {
+    var history = JSON.parse(localStorage.getItem('bjck_history') || '[]');
+    var section = document.getElementById('historySection');
+    var list = document.getElementById('historyList');
+    if (history.length === 0) { section.style.display = 'none'; return; }
+    section.style.display = 'block';
+    var html = '';
+    for (var i = 0; i < history.length; i++) {
+      var h = history[i];
+      html += '<div class="history-item">' +
+        '<div class="hi-top"><span class="hi-card">' + h.cardName + '</span>' +
+        '<span class="hi-status ' + (h.pass ? 'pass' : 'fail') + '">' + (h.pass ? '\u901a\u8fc7' : '\u4e0d\u901a\u8fc7') + '</span></div>' +
+        '<div class="hi-detail">\u8def\u5f84' + h.path + ' &#x00B7; \u7533\u8bf7\u65e5\u671f ' + h.date + ' &#x00B7; \u72b6\u6001 ' + h.status + '</div>' +
+        '<div class="hi-time">' + h.time + '</div></div>';
+    }
+    list.innerHTML = html;
+  } catch(e) {
+    console.log('History render error:', e);
+  }
 }
 
 function clearHistory() {
-  if (confirm('\u786E\u8BA4\u6E05\u7A7A\u6240\u6709\u6838\u9A8C\u8BB0\u5F55\uFF1F')) {
+  if (confirm('\u786e\u8ba4\u6e05\u7a7a\u6240\u6709\u6838\u9a8c\u8bb0\u5f55\uff1f')) {
     localStorage.removeItem('bjck_history');
     renderHistory();
   }
