@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>比利·简·金杯 · 下卡核验</title>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+<style>
+:root {
+  --primary: #C41230; --primary-dark: #8B0020; --bg: #F5F5F5; --card: #FFFFFF;
+  --text: #1A1A1A; --text-secondary: #666666; --border: #E0E0E0;
+  --success: #2E7D32; --success-bg: #E8F5E9; --fail: #C62828; --fail-bg: #FFEBEE;
+  --gold: #D4A843;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+  background: var(--bg); color: var(--text); min-height: 100vh;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.header {
+  background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+  color: #fff; padding: 20px 16px 16px; text-align: center;
+}
+.header h1 { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+.header .subtitle { font-size: 13px; opacity: 0.85; }
+.header .badge {
+  display: inline-block; background: var(--gold); color: #1A1A1A;
+  font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 10px; margin-top: 8px;
+}
+.container { padding: 16px; max-width: 480px; margin: 0 auto; }
+.upload-card {
+  background: var(--card); border-radius: 16px; padding: 20px 16px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06); margin-bottom: 16px;
+}
+.upload-zone {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 28px 16px; border: 2px dashed var(--border); border-radius: 12px;
+  cursor: pointer; transition: all 0.2s;
+}
+.upload-zone:active { border-color: var(--primary); background: #FFF0F3; }
+.upload-icon { font-size: 44px; margin-bottom: 8px; }
+.upload-text { font-size: 15px; font-weight: 600; }
+.upload-hint { font-size: 12px; color: var(--text-secondary); margin-top: 4px; }
+.preview-card {
+  background: var(--card); border-radius: 16px; padding: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06); margin-bottom: 16px;
+}
+.preview-top {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 8px; font-size: 13px; color: var(--text-secondary);
+}
+.btn-change { background: none; border: none; color: var(--primary); font-size: 13px; cursor: pointer; }
+#previewImg { width: 100%; border-radius: 10px; max-height: 280px; object-fit: contain; }
+.progress-card {
+  background: var(--card); border-radius: 16px; padding: 20px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06); margin-bottom: 16px; text-align: center;
+}
+.progress-icon { font-size: 36px; margin-bottom: 8px; }
+.progress-title { font-size: 15px; font-weight: 600; margin-bottom: 12px; }
+.progress-bar {
+  height: 6px; background: #E8E8E8; border-radius: 3px; overflow: hidden; margin-bottom: 8px;
+}
+.progress-fill { height: 100%; background: var(--primary); border-radius: 3px; transition: width 0.3s; }
+.progress-text { font-size: 12px; color: var(--text-secondary); }
+.result-card {
+  border-radius: 16px; padding: 20px 16px; margin-bottom: 16px; display: none;
+}
+.result-card.pass { background: var(--success-bg); border: 1.5px solid var(--success); }
+.result-card.fail { background: var(--fail-bg); border: 1.5px solid var(--fail); }
+.result-icon { font-size: 36px; text-align: center; margin-bottom: 8px; }
+.result-title { text-align: center; font-size: 18px; font-weight: 700; margin-bottom: 12px; }
+.result-card.pass .result-title { color: var(--success); }
+.result-card.fail .result-title { color: var(--fail); }
+.result-details { background: rgba(255,255,255,0.7); border-radius: 10px; padding: 12px; font-size: 13px; }
+.result-details .item { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px dashed var(--border); }
+.result-details .item:last-child { border-bottom: none; }
+.result-details .item .k { color: var(--text-secondary); }
+.result-details .item .v { font-weight: 600; }
+.history-section { margin-top: 8px; }
+.history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.history-header h3 { font-size: 15px; font-weight: 600; }
+.history-clear { font-size: 12px; color: var(--primary); background: none; border: none; cursor: pointer; }
+.history-item {
+  background: var(--card); border-radius: 12px; padding: 14px; margin-bottom: 8px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04); animation: fadeIn 0.25s ease;
+}
+.history-item .hi-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.history-item .hi-card { font-weight: 600; font-size: 14px; }
+.history-item .hi-time { font-size: 11px; color: var(--text-secondary); }
+.history-item .hi-detail { font-size: 12px; color: var(--text-secondary); }
+.history-item .hi-status { display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; }
+.history-item .hi-status.pass { background: var(--success-bg); color: var(--success); }
+.history-item .hi-status.fail { background: var(--fail-bg); color: var(--fail); }
+.footer { text-align: center; padding: 20px 16px 30px; font-size: 11px; color: #999; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.result-card.show { display: block; animation: fadeIn 0.3s ease; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🏆 比利·简·金杯</h1>
+  <div class="subtitle">工商银行联名卡 · 下卡核验</div>
+  <div class="badge">礼品领取资格 · 现场检查</div>
+</div>
+
+<div class="container">
+  <div class="upload-card">
+    <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
+      <div class="upload-icon">📷</div>
+      <div class="upload-text">点击上传或拍照</div>
+      <div class="upload-hint">上传客户工行APP截图，自动识别核验</div>
+    </div>
+    <input type="file" id="fileInput" accept="image/*" onchange="handleUpload(event)" style="display:none">
+  </div>
+
+  <div class="preview-card" id="previewCard" style="display:none">
+    <div class="preview-top">
+      <span>📷 已上传截图</span>
+      <button class="btn-change" onclick="document.getElementById('fileInput').click()">重新选择</button>
+    </div>
+    <img id="previewImg" src="" alt="preview">
+  </div>
+
+  <div class="progress-card" id="progressCard" style="display:none">
+    <div class="progress-icon">⏳</div>
+    <div class="progress-title">正在识别截图…</div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    <div class="progress-text" id="progressText">初始化中</div>
+  </div>
+
+  <div class="result-card" id="resultCard"></div>
+
+  <div class="history-section" id="historySection" style="display:none">
+    <div class="history-header">
+      <h3>📋 核验记录</h3>
+      <button class="history-clear" onclick="clearHistory()">清空记录</button>
+    </div>
+    <div id="historyList"></div>
+  </div>
+
+  <div class="footer">
+    比利·简·金杯赛事 · 工商银行联名卡推广<br>
+    现场核验工具 v3.0 · 支持多记录识别
+  </div>
+</div>
+
+<script>
+const validCards = ['奋斗万事达简约白金卡', '欧洲旅行卡', '奋斗中国很赞M白金'];
+const path1Statuses = ['开户成功', '已完成'];
+const path2Statuses = ['已启用', '已邮寄', '已审批'];
+const minDate = '2025-01-01';
+
+function handleUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    document.getElementById('previewImg').src = e.target.result;
+    document.getElementById('previewCard').style.display = 'block';
+    document.getElementById('progressCard').style.display = 'block';
+    document.getElementById('resultCard').style.display = 'none';
+    document.getElementById('resultCard').className = 'result-card';
+    document.getElementById('progressFill').style.width = '0%';
+    document.getElementById('progressText').textContent = '初始化中…';
+    runOCR(e.target.result);
+  };
+  reader.readAsDataURL(file);
+}
+
+function runOCR(imageSrc) {
+  Tesseract.recognize(imageSrc, 'chi_sim+eng', {
+    logger: function(m) {
+      if (m.status === 'recognizing text') {
+        const pct = Math.round(m.progress * 100);
+        document.getElementById('progressFill').style.width = pct + '%';
+        document.getElementById('progressText').textContent = '正在识别… ' + pct + '%';
+      } else if (m.status) {
+        document.getElementById('progressText').textContent = m.status;
+      }
+    }
+  }).then(function(result) {
+    const text = result.data.text;
+    console.log('OCR raw text:', text);
+    document.getElementById('progressCard').style.display = 'none';
+    parseAndVerify(text);
+  }).catch(function(err) {
+    console.error('OCR failed:', err);
+    document.getElementById('progressCard').style.display = 'none';
+    showSingleResult(false, [{ name: '识别', value: 'OCR识别失败', pass: false }]);
+  });
+}
+
+function parseAndVerify(text) {
+  const records = [];
+  const entries = text.split(/申请单[s:]*/);
+
+  for (const entry of entries) {
+    if (!entry.trim()) continue;
+    const rec = { cardName: '', applyDate: '', cardStatus: '', path: 1 };
+
+    const cardMatch = entry.match(/^[s]*(.+?)s+北京/);
+    if (cardMatch) {
+      const rawName = cardMatch[1].trim();
+      if (rawName.includes('欧洲旅行')) rec.cardName = '欧洲旅行卡';
+      else if (rawName.includes('奋斗万事达')) rec.cardName = '奋斗万事达简约白金卡';
+      else if (rawName.includes('中国很赞')) rec.cardName = '奋斗中国很赞M白金';
+      else rec.cardName = rawName;
+    }
+
+    const dateMatch = entry.match(/申请日期[s:：]*(d{4})[-/年](d{1,2})[-/月](d{1,2})/);
+    if (dateMatch) {
+      rec.applyDate = dateMatch[1] + '-' + dateMatch[2].padStart(2, '0') + '-' + dateMatch[3].padStart(2, '0');
+    }
+
+    if (entry.includes('开户成功')) { rec.cardStatus = '开户成功'; rec.path = 1; }
+    else if (entry.includes('已完成')) { rec.cardStatus = '已完成'; rec.path = 1; }
+    else if (entry.includes('已启用')) { rec.cardStatus = '已启用'; rec.path = 2; }
+    else if (entry.includes('已邮寄')) { rec.cardStatus = '已邮寄'; rec.path = 2; }
+    else if (entry.includes('已审批')) { rec.cardStatus = '已审批'; rec.path = 2; }
+
+    if (rec.cardName || rec.applyDate || rec.cardStatus) {
+      records.push(rec);
+    }
+  }
+
+  if (records.length === 0) {
+    showSingleResult(false, [{ name: '识别', value: '未识别到卡片信息', pass: false }]);
+    return;
+  }
+
+  const results = [];
+  for (const rec of records) {
+    let pass = true;
+    let reasons = [];
+
+    if (!rec.cardName || !validCards.includes(rec.cardName)) {
+      pass = false;
+      reasons.push('卡种不符合');
+    }
+    if (!rec.applyDate) {
+      pass = false;
+      reasons.push('日期未识别');
+    } else if (rec.applyDate < minDate) {
+      pass = false;
+      reasons.push('日期不符合');
+    }
+    if (!rec.cardStatus) {
+      pass = false;
+      reasons.push('状态未识别');
+    } else {
+      const expected = rec.path === 1 ? path1Statuses : path2Statuses;
+      if (!expected.includes(rec.cardStatus)) {
+        pass = false;
+        reasons.push('状态不符合');
+      }
+    }
+
+    results.push({
+      cardName: rec.cardName || '未知',
+      pass, reason: reasons.join('、'),
+      date: rec.applyDate || '-', status: rec.cardStatus || '-'
+    });
+
+    saveHistory(pass, rec.cardName || '未知', rec.path, rec.applyDate || '-', rec.cardStatus || '-');
+  }
+
+  showMultiResult(results);
+}
+
+function showSingleResult(pass, checks) {
+  const card = document.getElementById('resultCard');
+  card.className = 'result-card show ' + (pass ? 'pass' : 'fail');
+
+  let html = '<div class="result-icon">' + (pass ? '✅' : '❌') + '</div>';
+  html += '<div class="result-title">' + (pass ? '符合领取资格' : '不符合领取资格') + '</div>';
+  html += '<div class="result-details">';
+  checks.forEach(function(c) {
+    const icon = c.pass ? '✓' : '✗';
+    const color = c.pass ? 'var(--success)' : 'var(--fail)';
+    html += '<div class="item"><span class="k">' + icon + ' ' + c.name + '</span><span class="v" style="color:' + color + '">' + c.value + '</span></div>';
+  });
+  html += '</div>';
+  card.innerHTML = html;
+  card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function showMultiResult(results) {
+  const card = document.getElementById('resultCard');
+  card.className = 'result-card show';
+
+  const totalPass = results.filter(function(r) { return r.pass; }).length;
+  const totalFail = results.length - totalPass;
+  const hasAnyPass = totalPass > 0;
+
+  card.style.background = hasAnyPass ? 'var(--success-bg)' : 'var(--fail-bg)';
+  card.style.border = hasAnyPass ? '1.5px solid var(--success)' : '1.5px solid var(--fail)';
+  card.className = 'result-card show ' + (hasAnyPass ? 'pass' : 'fail');
+
+  let html = '<div class="result-icon">' + (hasAnyPass ? '✅' : '⚠️') + '</div>';
+  html += '<div class="result-title">共识别 ' + results.length + ' 条记录，' + totalPass + ' 条通过，' + totalFail + ' 条不通过' + (hasAnyPass ? ' — 有符合条件的记录，可以领取礼品 🎁' : '') + '</div>';
+  html += '<div class="result-details">';
+
+  results.forEach(function(r) {
+    const icon = r.pass ? '✅' : '';
+    const color = r.pass ? 'var(--success)' : 'var(--fail)';
+    const label = r.pass ? '通过' : '不通过';
+    html += '<div style="padding:10px 0;border-bottom:1px dashed var(--border);">';
+    html += '<div style="font-weight:600;margin-bottom:4px;">' + icon + ' ' + r.cardName + '</div>';
+    html += '<div style="font-size:12px;color:var(--text-secondary);">日期: ' + r.date + ' | 状态: ' + r.status + '</div>';
+    html += '<div style="font-size:13px;font-weight:600;margin-top:4px;color:' + color + ';">' + label + (!r.pass ? ' — ' + r.reason : '') + '</div>';
+    html += '</div>';
+  });
+
+  html += '</div>';
+  card.innerHTML = html;
+  card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function saveHistory(pass, cardName, path, date, status) {
+  const history = JSON.parse(localStorage.getItem('bjck_history') || '[]');
+  const now = new Date();
+  const timeStr = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' +
+    String(now.getDate()).padStart(2,'0') + ' ' + String(now.getHours()).padStart(2,'0') + ':' +
+    String(now.getMinutes()).padStart(2,'0') + ':' + String(now.getSeconds()).padStart(2,'0');
+  history.unshift({ time: timeStr, pass: pass, cardName: cardName, path: path, date: date, status: status });
+  if (history.length > 50) history.length = 50;
+  localStorage.setItem('bjck_history', JSON.stringify(history));
+  renderHistory();
+}
+
+function renderHistory() {
+  const history = JSON.parse(localStorage.getItem('bjck_history') || '[]');
+  const section = document.getElementById('historySection');
+  const list = document.getElementById('historyList');
+  if (history.length === 0) { section.style.display = 'none'; return; }
+  section.style.display = 'block';
+  list.innerHTML = history.map(function(h) {
+    return '<div class="history-item">' +
+      '<div class="hi-top"><span class="hi-card">' + h.cardName + '</span>' +
+      '<span class="hi-status ' + (h.pass ? 'pass' : 'fail') + '">' + (h.pass ? '通过' : '不通过') + '</span></div>' +
+      '<div class="hi-detail">路径' + h.path + ' · 申请日期 ' + h.date + ' · 状态 ' + h.status + '</div>' +
+      '<div class="hi-time">' + h.time + '</div></div>';
+  }).join('');
+}
+
+function clearHistory() {
+  if (confirm('确认清空所有核验记录？')) {
+    localStorage.removeItem('bjck_history');
+    renderHistory();
+  }
+}
+
+renderHistory();
+</script>
+</body>
+</html>
