@@ -14,21 +14,19 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
 .header .badge{display:inline-block;background:var(--gold);color:#1A1A1A;font-size:11px;font-weight:600;padding:2px 8px;border-radius:10px;margin-top:8px}
 .container{padding:16px;max-width:480px;margin:0 auto}
 .card{background:var(--card);border-radius:16px;padding:20px 16px;box-shadow:0 2px 12px rgba(0,0,0,.06);margin-bottom:16px}
-.photo-area{margin-bottom:12px}
-.photo-btn{width:100%;padding:16px;background:var(--card);border:2px dashed var(--border);border-radius:12px;cursor:pointer;text-align:center;transition:all .2s;font-size:14px;color:var(--text2)}
+.photo-btn{width:100%;padding:16px;background:var(--card);border:2px dashed var(--border);border-radius:12px;cursor:pointer;text-align:center;font-size:14px;color:var(--text2);margin-bottom:10px}
 .photo-btn:active{border-color:var(--primary);background:#FFF0F3}
 .photo-btn.done{border-style:solid;border-color:var(--success);background:var(--success-bg);color:var(--success)}
 #fileInput{display:none}
-.preview-wrap{display:none;margin-top:10px}
+.preview-wrap{display:none}
 .preview-img{width:100%;border-radius:10px;max-height:200px;object-fit:contain}
 .photo-actions{display:flex;gap:8px;margin-top:8px}
 .photo-actions button{flex:1;padding:8px;border:1px solid var(--border);border-radius:8px;background:var(--card);font-size:13px;color:var(--text2);cursor:pointer}
-.photo-actions button:active{background:#f5f5f5}
 .form-group{margin-bottom:14px}
 .form-group label{display:block;font-size:13px;font-weight:600;margin-bottom:5px;color:var(--text2)}
 .form-group input,.form-group select{width:100%;padding:12px;border:1px solid var(--border);border-radius:8px;font-size:15px;color:var(--text);background:var(--card);outline:none;-webkit-appearance:none}
 .form-group input:focus,.form-group select:focus{border-color:var(--primary);box-shadow:0 0 0 2px rgba(196,18,48,.15)}
-.btn-verify{width:100%;padding:14px;background:var(--primary);color:#fff;border:none;border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;margin-top:8px}
+.btn-verify{width:100%;padding:14px;background:var(--primary);color:#fff;border:none;border-radius:12px;font-size:16px;font-weight:600;cursor:pointer}
 .btn-verify:active{opacity:.85}
 .btn-reset{width:100%;padding:12px;background:none;color:var(--text2);border:1px solid var(--border);border-radius:12px;font-size:14px;cursor:pointer;margin-top:8px}
 .btn-reset:active{background:#f5f5f5}
@@ -51,7 +49,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
 .hi-thumb{width:100%;max-height:180px;object-fit:contain;border-radius:8px;margin-top:8px}
 .history-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
 .history-header h3{font-size:15px;font-weight:600}
-.btn-load{font-size:12px;color:var(--primary);background:none;border:none;cursor:pointer}
+.btn-clear{font-size:12px;color:var(--primary);background:none;border:none;cursor:pointer}
 .footer{text-align:center;padding:20px 16px 30px;font-size:11px;color:#999}
 </style>
 </head>
@@ -64,17 +62,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
 <div class="container">
 
   <div class="card">
-    <div class="photo-area">
-      <div class="photo-btn" id="photoBtn" onclick="document.getElementById('fileInput').click()">
-        &#x1f4f7; 拍照 / 选图存档（可选）
-      </div>
-      <input type="file" id="fileInput" accept="image/*" onchange="handlePhoto(event)">
-      <div class="preview-wrap" id="previewWrap">
-        <img class="preview-img" id="previewImg">
-        <div class="photo-actions">
-          <button onclick="document.getElementById('fileInput').click()">&#x1f4f7; 重选</button>
-          <button onclick="removePhoto()">删除</button>
-        </div>
+    <div class="photo-btn" id="photoBtn" onclick="document.getElementById('fileInput').click()">
+      &#x1f4f7; 拍照/选图（可选，绑定本次核验）
+    </div>
+    <input type="file" id="fileInput" accept="image/*" onchange="handlePhoto(event)">
+    <div class="preview-wrap" id="previewWrap">
+      <img class="preview-img" id="previewImg">
+      <div class="photo-actions">
+        <button onclick="document.getElementById('fileInput').click()">&#x1f4f7; 重选</button>
+        <button onclick="removePhoto()">删除</button>
       </div>
     </div>
   </div>
@@ -82,7 +78,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
   <div class="card">
     <div class="form-group">
       <label>申请单号</label>
-      <input type="text" id="applyNo" placeholder="如：02002025057700521" autocomplete="off">
+      <input type="text" id="applyNo" placeholder="如：02002025057700521">
     </div>
     <div class="form-group">
       <label>卡种</label>
@@ -102,10 +98,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
       <select id="cardStatus">
         <option value="">请选择状态</option>
         <option value="&#x5f00;&#x6237;&#x6210;&#x529f;">&#x5f00;&#x6237;&#x6210;&#x529f;</option>
-        <option value="&#x5df2;&#x5b8c;&#x6210;&#x3002;">&#x5df2;&#x5b8c;&#x6210;&#x3002;</option>
-        <option value="&#x5df2;&#x542f;&#x7528;&#x3002;">&#x5df2;&#x542f;&#x7528;&#x3002;</option>
-        <option value="&#x5df2;&#x90ae;&#x5bc4;&#x3002;">&#x5df2;&#x90ae;&#x5bc4;&#x3002;</option>
-        <option value="&#x5df2;&#x5ba1;&#x6279;&#x3002;">&#x5df2;&#x5ba1;&#x6279;&#x3002;</option>
+        <option value="&#x5df2;&#x5b8c;&#x6210;">&#x5df2;&#x5b8c;&#x6210;</option>
+        <option value="&#x5df2;&#x542f;&#x7528;">&#x5df2;&#x542f;&#x7528;</option>
+        <option value="&#x5df2;&#x90ae;&#x5bc4;">&#x5df2;&#x90ae;&#x5bc4;</option>
+        <option value="&#x5df2;&#x5ba1;&#x6279;">&#x5df2;&#x5ba1;&#x6279;</option>
       </select>
     </div>
     <button class="btn-verify" onclick="doVerify()">&#x2705; 核验</button>
@@ -116,66 +112,43 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
 
   <div id="historySection" style="display:none">
     <div class="history-header">
-      <h3>&#x1f4cb; 核验记录（全部）</h3>
-      <button class="btn-load" id="btnLoadMore" onclick="loadMore()">加载更多</button>
+      <h3>&#x1f4cb; 核验记录</h3>
+      <button class="btn-clear" onclick="clearHistory()">清空记录</button>
     </div>
     <div id="historyList"></div>
   </div>
 
-  <div class="footer">比利·简·金杯赛事 · 工商万事达信用卡推广<br>现场核验工具 v11.0</div>
+  <div class="footer">比利·简·金杯赛事 · 工商万事达信用卡推广<br>现场核验工具 v12.0</div>
 </div>
 
-<!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
-
 <script>
-// ===== Firebase Config =====
-var firebaseConfig = {
-  apiKey: "AIzaSyATfHjCLJx3u9TnuwVKjNV3Kw403yfI2Wc",
-  authDomain: "bjck-check.firebaseapp.com",
-  databaseURL: "https://bjck-check-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "bjck-check",
-  storageBucket: "bjck-check.firebasestorage.app",
-  messagingSenderId: "239337802544",
-  appId: "1:239337802544:web:95b41c412716650d17d6f5",
-  measurementId: "G-EL45NYHBM3"
-};
-firebase.initializeApp(firebaseConfig);
-var db = firebase.database();
-
-// ===== Constants =====
 var minDate='2025-01-01';
-var PAGE_SIZE=20;
-var lastKey=null;
-var loading=false;
 
-// ===== Photo Handling =====
 function handlePhoto(e){
   var f=e.target.files[0];
   if(!f)return;
-  compressImage(f,300,function(base64){
+  compressImage(f,400,function(base64){
     document.getElementById('previewImg').src=base64;
     document.getElementById('previewWrap').style.display='block';
     var btn=document.getElementById('photoBtn');
     btn.className='photo-btn done';
-    btn.textContent='\u2705 已存档截图';
+    btn.textContent='\u2705 已选图（绑定本次核验）';
   });
 }
 
-function compressImage(file,maxWidth,cb){
+function compressImage(file,maxW,cb){
   var reader=new FileReader();
   reader.onload=function(e){
     var img=new Image();
     img.onload=function(){
       var canvas=document.createElement('canvas');
-      var ratio=1;
-      if(img.width>maxWidth)ratio=maxWidth/img.width;
-      canvas.width=img.width*ratio;
-      canvas.height=img.height*ratio;
+      var r=1;
+      if(img.width>maxW)r=maxW/img.width;
+      canvas.width=img.width*r;
+      canvas.height=img.height*r;
       var ctx=canvas.getContext('2d');
       ctx.drawImage(img,0,0,canvas.width,canvas.height);
-      cb(canvas.toDataURL('image/jpeg',0.7));
+      cb(canvas.toDataURL('image/jpeg',0.6));
     };
     img.src=e.target.result;
   };
@@ -188,24 +161,21 @@ function removePhoto(){
   document.getElementById('fileInput').value='';
   var btn=document.getElementById('photoBtn');
   btn.className='photo-btn';
-  btn.textContent='\u{1f4f7} 拍照 / 选图存档（可选）';
+  btn.textContent='\u{1f4f7} 拍照/选图（可选，绑定本次核验）';
 }
 
-// ===== Verification =====
 function doVerify(){
   var applyNo=document.getElementById('applyNo').value.trim();
   var cardType=document.getElementById('cardType').value;
   var applyDate=document.getElementById('applyDate').value;
   var cardStatus=document.getElementById('cardStatus').value;
-  var photo=document.getElementById('previewImg').src||'';
-  var hasPhoto=document.getElementById('previewWrap').style.display!=='none';
 
   if(!cardType&&!applyDate&&!cardStatus){
     showResult(false,'\u4e0d\u901a\u8fc7','\u8bf7\u81f3\u5c11\u586b\u5199\u5361\u79cd\u3001\u7533\u8bf7\u65e5\u671f\u3001\u5361\u72b6\u6001');
     return;
   }
 
-  var pass=false;
+  var pass=true;
   var reasons=[];
 
   var validCards=['\u594b\u6597\u4e07\u4e8b\u8fbe\u7b80\u7ea6\u767d\u91d1\u5361','\u6b27\u6d32\u65c5\u884c\u5361','\u594b\u6597\u4e2d\u56fd\u5f88\u8d5e\u202f\u202f\u767d\u91d1'];
@@ -215,9 +185,11 @@ function doVerify(){
   if(!applyDate){pass=false;reasons.push('\u672a\u586b\u5199\u7533\u8bf7\u65e5\u671f');}
   else if(applyDate<minDate){pass=false;reasons.push('\u7533\u8bf7\u65e5\u671f\u65e9\u4e8e '+minDate);}
 
-  var allStatus=['\u5f00\u6237\u6210\u529f','\u5df2\u5b8c\u6210\u3002','\u5df2\u542f\u7528\u3002','\u5df2\u90ae\u5bc4\u3002','\u5df2\u5ba1\u6279\u3002'];
+  var allStatus=['\u5f00\u6237\u6210\u529f','\u5df2\u5b8c\u6210','\u5df2\u542f\u7528','\u5df2\u90ae\u5bc4','\u5df2\u5ba1\u6279'];
   if(!cardStatus){pass=false;reasons.push('\u672a\u9009\u62e9\u5361\u72b6\u6001');}
   else if(allStatus.indexOf(cardStatus)===-1){pass=false;reasons.push('\u5361\u72b6\u6001\u4e0d\u7b26\u5408('+cardStatus+')');}
+
+  var photo=document.getElementById('previewWrap').style.display!=='none'?document.getElementById('previewImg').src:'';
 
   var record={
     cardName:cardType||'\u672a\u9009\u62e9',
@@ -226,19 +198,16 @@ function doVerify(){
     status:cardStatus||'-',
     pass:pass,
     reasons:reasons.join('\uff1b'),
-    photo:hasPhoto?photo:'',
+    photo:photo,
     time:Date.now()
   };
 
-  db.ref('records').push(record).then(function(){
-    if(pass){showResult(true,'\u901a\u8fc7','');}
-    else{showResult(false,'\u4e0d\u901a\u8fc7',record.reasons);}
-    doReset();
-  }).catch(function(err){
-    console.error('Save failed:',err);
-    if(pass){showResult(true,'\u901a\u8fc7','');}
-    else{showResult(false,'\u4e0d\u901a\u8fc7',record.reasons);}
-  });
+  saveRecord(record);
+
+  if(pass){showResult(true,'\u901a\u8fc7','');}
+  else{showResult(false,'\u4e0d\u901a\u8fc7',record.reasons);}
+
+  doReset();
 }
 
 function showResult(pass,title,reason){
@@ -261,63 +230,55 @@ function doReset(){
   removePhoto();
 }
 
-// ===== History =====
-function loadHistory(){
-  if(loading)return;
-  loading=true;
-  var s=document.getElementById('historySection');
-  s.style.display='block';
-  db.ref('records').orderByChild('time').limitToLast(PAGE_SIZE).once('value').then(function(snapshot){
-    loading=false;
-    var items=[];
-    snapshot.forEach(function(child){
-      items.push(child.val());
-      lastKey=child.key;
-    });
-    items.reverse();
-    if(!items.length){s.style.display='none';return;}
-    document.getElementById('btnLoadMore').style.display=items.length>=PAGE_SIZE?'inline':'none';
-    var l=document.getElementById('historyList');
-    l.innerHTML=renderItems(items)+l.innerHTML;
-  });
-}
-
-function loadMore(){
-  if(loading||!lastKey)return;
-  loading=true;
-  db.ref('records').orderByChild('time').endAt(parseInt(lastKey)-1).limitToLast(PAGE_SIZE).once('value').then(function(snapshot){
-    loading=false;
-    var items=[];
-    snapshot.forEach(function(child){items.push(child.val());lastKey=child.key;});
-    items.reverse();
-    document.getElementById('btnLoadMore').style.display=items.length>=PAGE_SIZE?'inline':'none';
-    if(items.length){var l=document.getElementById('historyList');l.innerHTML=l.innerHTML+renderItems(items);}
-  });
-}
-
-function renderItems(items){
-  var html='';
-  for(var i=0;i<items.length;i++){
-    var x=items[i];
-    var t=new Date(x.time);
-    var ts=t.getFullYear()+'-'+p2(t.getMonth()+1)+'-'+p2(t.getDate())+' '+p2(t.getHours())+':'+p2(t.getMinutes());
-    html+='<div class="hi">'
-      +'<div class="hi-top">'
-      +'<span class="hi-name">'+esc(x.cardName)+'</span>'
-      +'<span class="hi-status '+(x.pass?'pass':'fail')+'">'+(x.pass?'\u901a\u8fc7':'\u4e0d\u901a\u8fc7')+'</span>'
-      +'</div>'
-      +'<div class="hi-detail">\u5355\u53f7 '+esc(x.applyNo)+' \u00b7 \u65e5\u671f '+esc(x.date)+' \u00b7 \u72b6\u6001 '+esc(x.status)+'</div>';
-    if(x.reasons)html+='<div class="hi-detail" style="color:var(--fail)">'+esc(x.reasons)+'</div>';
-    if(x.photo)html+='<img class="hi-thumb" src="'+x.photo+'" onclick="window.open(this.src)">';
-    html+='<div class="hi-time">'+ts+'</div></div>';
-  }
-  return html;
+function saveRecord(r){
+  try{
+    var h=JSON.parse(localStorage.getItem('bjck_v12')||'[]');
+    var n=new Date();
+    var ts=n.getFullYear()+'-'+p2(n.getMonth()+1)+'-'+p2(n.getDate())
+      +' '+p2(n.getHours())+':'+p2(n.getMinutes())+':'+p2(n.getSeconds());
+    h.unshift({time:ts,timeMs:r.time,pass:r.pass,cardName:r.cardName,date:r.date,status:r.status,applyNo:r.applyNo,photo:r.photo,reasons:r.reasons});
+    if(h.length>100)h.length=100;
+    localStorage.setItem('bjck_v12',JSON.stringify(h));
+    renderHistory();
+  }catch(e){}
 }
 
 function p2(n){return n<10?'0'+n:''+n;}
+
+function renderHistory(){
+  try{
+    var h=JSON.parse(localStorage.getItem('bjck_v12')||'[]');
+    var s=document.getElementById('historySection');
+    var l=document.getElementById('historyList');
+    if(!h.length){s.style.display='none';return;}
+    s.style.display='block';
+    var html='';
+    for(var i=0;i<h.length;i++){
+      var x=h[i];
+      html+='<div class="hi">'
+        +'<div class="hi-top">'
+        +'<span class="hi-name">'+esc(x.cardName)+'</span>'
+        +'<span class="hi-status '+(x.pass?'pass':'fail')+'">'+(x.pass?'\u901a\u8fc7':'\u4e0d\u901a\u8fc7')+'</span>'
+        +'</div>'
+        +'<div class="hi-detail">\u5355\u53f7 '+esc(x.applyNo)+' \u00b7 \u65e5\u671f '+esc(x.date)+' \u00b7 \u72b6\u6001 '+esc(x.status)+'</div>';
+      if(x.reasons)html+='<div class="hi-detail" style="color:var(--fail)">'+esc(x.reasons)+'</div>';
+      if(x.photo)html+='<img class="hi-thumb" src="'+x.photo+'">';
+      html+='<div class="hi-time">'+esc(x.time)+'</div></div>';
+    }
+    l.innerHTML=html;
+  }catch(e){}
+}
+
 function esc(t){var d=document.createElement('div');d.appendChild(document.createTextNode(t));return d.innerHTML;}
 
-loadHistory();
+function clearHistory(){
+  if(confirm('\u786e\u8ba4\u6e05\u7a7a\u6240\u6709\u6838\u9a8c\u8bb0\u5f55\uff1f')){
+    localStorage.removeItem('bjck_v12');
+    renderHistory();
+  }
+}
+
+renderHistory();
 </script>
 </body>
 </html>
