@@ -298,7 +298,7 @@ function showResult(hp,results,em,debug,raw){
       html+='<div style="padding:10px 0;border-bottom:1px dashed var(--border);">';
       html+='<div style="font-weight:600;margin-bottom:4px;">'+(r.pass?'\u2705':'')+' '+r.cardName+'</div>';
       html+='<div style="font-size:12px;color:var(--text-secondary);">\u65e5\u671f: '+r.date+' | \u72b6\u6001: '+r.status+'</div>';
-      html+='<div style="font-size:13px;font-weight:600;margin-top:4px;color:'+(r.pass?'var(--success)':'var(--fail))+';">'+(r.pass?'\u901a\u8fc7':'\u4e0d\u901a\u8fc7');
+      html+='<div style="font-size:13px;font-weight:600;margin-top:4px;color:'+(r.pass?'var(--success)':'var(--fail)')+';">'+(r.pass?'\u901a\u8fc7':'\u4e0d\u901a\u8fc7');
       if(!r.pass&&r.reason)html+=' \u2014 '+r.reason;
       html+='</div></div>';
     }
