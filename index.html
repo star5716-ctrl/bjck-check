@@ -52,13 +52,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
 .history-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
 .history-header h3{font-size:15px;font-weight:600}
 .btn-load{font-size:12px;color:var(--primary);background:none;border:none;cursor:pointer}
-.loading{text-align:center;padding:20px;color:var(--text2);font-size:14px}
 .footer{text-align:center;padding:20px 16px 30px;font-size:11px;color:#999}
 </style>
 </head>
 <body>
 <div class="header">
-  <h1>🏆 比利·简·金杯</h1>
+  <h1>&#x1f3c6; 比利·简·金杯</h1>
   <div class="subtitle">工商万事达信用卡 · 下卡核验</div>
   <div class="badge">礼品领取资格 · 现场检查</div>
 </div>
@@ -67,13 +66,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
   <div class="card">
     <div class="photo-area">
       <div class="photo-btn" id="photoBtn" onclick="document.getElementById('fileInput').click()">
-        📷 拍照 / 选图存档（可选）
+        &#x1f4f7; 拍照 / 选图存档（可选）
       </div>
       <input type="file" id="fileInput" accept="image/*" onchange="handlePhoto(event)">
       <div class="preview-wrap" id="previewWrap">
         <img class="preview-img" id="previewImg">
         <div class="photo-actions">
-          <button onclick="document.getElementById('fileInput').click()">📷 重选</button>
+          <button onclick="document.getElementById('fileInput').click()">&#x1f4f7; 重选</button>
           <button onclick="removePhoto()">删除</button>
         </div>
       </div>
@@ -89,9 +88,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
       <label>卡种</label>
       <select id="cardType">
         <option value="">请选择卡种</option>
-        <option value="奋斗万事达简约白金卡">奋斗万事达简约白金卡</option>
-        <option value="欧洲旅行卡">欧洲旅行卡</option>
-        <option value="奋斗中国很赞M白金">奋斗中国很赞M白金</option>
+        <option value="&#x594b;&#x6597;&#x4e07;&#x4e8b;&#x8fbe;&#x7b80;&#x7ea6;&#x767d;&#x91d1;&#x5361;">&#x594b;&#x6597;&#x4e07;&#x4e8b;&#x8fbe;&#x7b80;&#x7ea6;&#x767d;&#x91d1;&#x5361;</option>
+        <option value="&#x6b27;&#x6d32;&#x65c5;&#x884c;&#x5361;">&#x6b27;&#x6d32;&#x65c5;&#x884c;&#x5361;</option>
+        <option value="&#x594b;&#x6597;&#x4e2d;&#x56fd;&#x5f88;&#x8d5e;&#x202f;&#x202f;&#x767d;&#x91d1;">&#x594b;&#x6597;&#x4e2d;&#x56fd;&#x5f88;&#x8d5e;&#x202f;&#x202f;&#x767d;&#x91d1;</option>
       </select>
     </div>
     <div class="form-group">
@@ -102,14 +101,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
       <label>卡状态</label>
       <select id="cardStatus">
         <option value="">请选择状态</option>
-        <option value="开户成功">开户成功</option>
-        <option value="已完成">已完成</option>
-        <option value="已启用">已启用</option>
-        <option value="已邮寄">已邮寄</option>
-        <option value="已审批">已审批</option>
+        <option value="&#x5f00;&#x6237;&#x6210;&#x529f;">&#x5f00;&#x6237;&#x6210;&#x529f;</option>
+        <option value="&#x5df2;&#x5b8c;&#x6210;&#x3002;">&#x5df2;&#x5b8c;&#x6210;&#x3002;</option>
+        <option value="&#x5df2;&#x542f;&#x7528;&#x3002;">&#x5df2;&#x542f;&#x7528;&#x3002;</option>
+        <option value="&#x5df2;&#x90ae;&#x5bc4;&#x3002;">&#x5df2;&#x90ae;&#x5bc4;&#x3002;</option>
+        <option value="&#x5df2;&#x5ba1;&#x6279;&#x3002;">&#x5df2;&#x5ba1;&#x6279;&#x3002;</option>
       </select>
     </div>
-    <button class="btn-verify" onclick="doVerify()">✅ 核验</button>
+    <button class="btn-verify" onclick="doVerify()">&#x2705; 核验</button>
     <button class="btn-reset" onclick="doReset()">清空表单</button>
   </div>
 
@@ -117,7 +116,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
 
   <div id="historySection" style="display:none">
     <div class="history-header">
-      <h3>📋 核验记录（全部）</h3>
+      <h3>&#x1f4cb; 核验记录（全部）</h3>
       <button class="btn-load" id="btnLoadMore" onclick="loadMore()">加载更多</button>
     </div>
     <div id="historyList"></div>
@@ -131,7 +130,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 
 <script>
-// ===== Firebase 配置 =====
+// ===== Firebase Config =====
 var firebaseConfig = {
   apiKey: "AIzaSyATfHjCLJx3u9TnuwVKjNV3Kw403yfI2Wc",
   authDomain: "bjck-check.firebaseapp.com",
@@ -145,13 +144,13 @@ var firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 var db = firebase.database();
 
-// ===== 常量 =====
+// ===== Constants =====
 var minDate='2025-01-01';
 var PAGE_SIZE=20;
 var lastKey=null;
 var loading=false;
 
-// ===== 照片处理 =====
+// ===== Photo Handling =====
 function handlePhoto(e){
   var f=e.target.files[0];
   if(!f)return;
@@ -160,7 +159,7 @@ function handlePhoto(e){
     document.getElementById('previewWrap').style.display='block';
     var btn=document.getElementById('photoBtn');
     btn.className='photo-btn done';
-    btn.textContent='✅ 已存档截图';
+    btn.textContent='\u2705 已存档截图';
   });
 }
 
@@ -189,10 +188,10 @@ function removePhoto(){
   document.getElementById('fileInput').value='';
   var btn=document.getElementById('photoBtn');
   btn.className='photo-btn';
-  btn.textContent='📷 拍照 / 选图存档（可选）';
+  btn.textContent='\u{1f4f7} 拍照 / 选图存档（可选）';
 }
 
-// ===== 核验 =====
+// ===== Verification =====
 function doVerify(){
   var applyNo=document.getElementById('applyNo').value.trim();
   var cardType=document.getElementById('cardType').value;
@@ -202,66 +201,43 @@ function doVerify(){
   var hasPhoto=document.getElementById('previewWrap').style.display!=='none';
 
   if(!cardType&&!applyDate&&!cardStatus){
-    showResult(false,'不通过','请至少填写卡种、申请日期、卡状态');
+    showResult(false,'\u4e0d\u901a\u8fc7','\u8bf7\u81f3\u5c11\u586b\u5199\u5361\u79cd\u3001\u7533\u8bf7\u65e5\u671f\u3001\u5361\u72b6\u6001');
     return;
   }
 
-  var pass=true;
+  var pass=false;
   var reasons=[];
 
-  var validCards=['奋斗万事达简约白金卡','欧洲旅行卡','奋斗中国很赞M白金'];
-  if(!cardType){
-    pass=false
-    reasons.push('未选择卡种');
-  }else if(validCards.indexOf(cardType)===-1){
-    pass=false
-    reasons.push('卡种不在认可范围内('+cardType+')');
-  }
+  var validCards=['\u594b\u6597\u4e07\u4e8b\u8fbe\u7b80\u7ea6\u767d\u91d1\u5361','\u6b27\u6d32\u65c5\u884c\u5361','\u594b\u6597\u4e2d\u56fd\u5f88\u8d5e\u202f\u202f\u767d\u91d1'];
+  if(!cardType){pass=false;reasons.push('\u672a\u9009\u62e9\u5361\u79cd');}
+  else if(validCards.indexOf(cardType)===-1){pass=false;reasons.push('\u5361\u79cd\u4e0d\u5728\u8ba4\u53ef\u8303\u56f4\u5185('+cardType+')');}
 
-  if(!applyDate){
-    pass=false
-    reasons.push('未填写申请日期');
-  }else if(applyDate<minDate){
-    pass=false
-    reasons.push('申请日期早于 '+minDate);
-  }
+  if(!applyDate){pass=false;reasons.push('\u672a\u586b\u5199\u7533\u8bf7\u65e5\u671f');}
+  else if(applyDate<minDate){pass=false;reasons.push('\u7533\u8bf7\u65e5\u671f\u65e9\u4e8e '+minDate);}
 
-  var allStatus=['开户成功','已完成','已启用','已邮寄','已审批'];
-  if(!cardStatus){
-    pass=false
-    reasons.push('未选择卡状态');
-  }else if(allStatus.indexOf(cardStatus)===-1){
-    pass=false
-    reasons.push('卡状态不符合('+cardStatus+')');
-  }
+  var allStatus=['\u5f00\u6237\u6210\u529f','\u5df2\u5b8c\u6210\u3002','\u5df2\u542f\u7528\u3002','\u5df2\u90ae\u5bc4\u3002','\u5df2\u5ba1\u6279\u3002'];
+  if(!cardStatus){pass=false;reasons.push('\u672a\u9009\u62e9\u5361\u72b6\u6001');}
+  else if(allStatus.indexOf(cardStatus)===-1){pass=false;reasons.push('\u5361\u72b6\u6001\u4e0d\u7b26\u5408('+cardStatus+')');}
 
   var record={
-    cardName:cardType||'未选择',
+    cardName:cardType||'\u672a\u9009\u62e9',
     applyNo:applyNo||'-',
     date:applyDate||'-',
     status:cardStatus||'-',
     pass:pass,
-    reasons:reasons.join('；'),
+    reasons:reasons.join('\uff1b'),
     photo:hasPhoto?photo:'',
     time:Date.now()
   };
 
-  // 写入 Firebase
   db.ref('records').push(record).then(function(){
-    if(pass){
-      showResult(true,'通过','');
-    }else{
-      showResult(false,'不通过',record.reasons);
-    }
+    if(pass){showResult(true,'\u901a\u8fc7','');}
+    else{showResult(false,'\u4e0d\u901a\u8fc7',record.reasons);}
     doReset();
   }).catch(function(err){
     console.error('Save failed:',err);
-    // 即使保存失败也显示结果
-    if(pass){
-      showResult(true,'通过','');
-    }else{
-      showResult(false,'不通过',record.reasons);
-    }
+    if(pass){showResult(true,'\u901a\u8fc7','');}
+    else{showResult(false,'\u4e0d\u901a\u8fc7',record.reasons);}
   });
 }
 
@@ -269,7 +245,7 @@ function showResult(pass,title,reason){
   var c=document.getElementById('resultCard');
   c.className='result-card '+(pass?'pass':'fail');
   c.style.display='block';
-  var h='<div class="result-icon">'+(pass?'✅':'❌')+'</div>';
+  var h='<div class="result-icon">'+(pass?'\u2705':'\u274c')+'</div>';
   h+='<div class="result-title">'+title+'</div>';
   if(reason)h+='<div class="result-reasons">'+reason+'</div>';
   c.innerHTML=h;
@@ -285,15 +261,13 @@ function doReset(){
   removePhoto();
 }
 
-// ===== 历史记录 =====
+// ===== History =====
 function loadHistory(){
   if(loading)return;
   loading=true;
   var s=document.getElementById('historySection');
   s.style.display='block';
-
-  var query=db.ref('records').orderByChild('time').limitToLast(PAGE_SIZE);
-  query.once('value').then(function(snapshot){
+  db.ref('records').orderByChild('time').limitToLast(PAGE_SIZE).once('value').then(function(snapshot){
     loading=false;
     var items=[];
     snapshot.forEach(function(child){
@@ -301,10 +275,7 @@ function loadHistory(){
       lastKey=child.key;
     });
     items.reverse();
-    if(items.length===0){
-      s.style.display='none';
-      return;
-    }
+    if(!items.length){s.style.display='none';return;}
     document.getElementById('btnLoadMore').style.display=items.length>=PAGE_SIZE?'inline':'none';
     var l=document.getElementById('historyList');
     l.innerHTML=renderItems(items)+l.innerHTML;
@@ -314,20 +285,13 @@ function loadHistory(){
 function loadMore(){
   if(loading||!lastKey)return;
   loading=true;
-  var query=db.ref('records').orderByChild('time').endAt(parseInt(lastKey)-1).limitToLast(PAGE_SIZE);
-  query.once('value').then(function(snapshot){
+  db.ref('records').orderByChild('time').endAt(parseInt(lastKey)-1).limitToLast(PAGE_SIZE).once('value').then(function(snapshot){
     loading=false;
     var items=[];
-    snapshot.forEach(function(child){
-      items.push(child.val());
-      lastKey=child.key;
-    });
+    snapshot.forEach(function(child){items.push(child.val());lastKey=child.key;});
     items.reverse();
     document.getElementById('btnLoadMore').style.display=items.length>=PAGE_SIZE?'inline':'none';
-    if(items.length>0){
-      var l=document.getElementById('historyList');
-      l.innerHTML=l.innerHTML+renderItems(items);
-    }
+    if(items.length){var l=document.getElementById('historyList');l.innerHTML=l.innerHTML+renderItems(items);}
   });
 }
 
@@ -340,9 +304,9 @@ function renderItems(items){
     html+='<div class="hi">'
       +'<div class="hi-top">'
       +'<span class="hi-name">'+esc(x.cardName)+'</span>'
-      +'<span class="hi-status '+(x.pass?'pass':'fail')+'">'+(x.pass?'通过':'不通过')+'</span>'
+      +'<span class="hi-status '+(x.pass?'pass':'fail')+'">'+(x.pass?'\u901a\u8fc7':'\u4e0d\u901a\u8fc7')+'</span>'
       +'</div>'
-      +'<div class="hi-detail">单号 '+esc(x.applyNo)+' · 日期 '+esc(x.date)+' · 状态 '+esc(x.status)+'</div>';
+      +'<div class="hi-detail">\u5355\u53f7 '+esc(x.applyNo)+' \u00b7 \u65e5\u671f '+esc(x.date)+' \u00b7 \u72b6\u6001 '+esc(x.status)+'</div>';
     if(x.reasons)html+='<div class="hi-detail" style="color:var(--fail)">'+esc(x.reasons)+'</div>';
     if(x.photo)html+='<img class="hi-thumb" src="'+x.photo+'" onclick="window.open(this.src)">';
     html+='<div class="hi-time">'+ts+'</div></div>';
@@ -353,7 +317,6 @@ function renderItems(items){
 function p2(n){return n<10?'0'+n:''+n;}
 function esc(t){var d=document.createElement('div');d.appendChild(document.createTextNode(t));return d.innerHTML;}
 
-// ===== 初始化 =====
 loadHistory();
 </script>
 </body>
